@@ -20,9 +20,9 @@ Route::get('/', function () {
 });
 
 Route::get('migrar',function(){
-    echo "Borrar:";
+    echo "Borrar:<br>";
     Artisan::call('db:wipe');
-    echo "Migrar";
+    echo "Migrar<br>";
     Artisan::call('migrate', 
     [
        '--seed' => true,
