@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Paquete;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
+use App\Http\Requests\StorePaqueteRequest;
 
 class PaqueteController extends Controller
 {
@@ -23,128 +25,90 @@ class PaqueteController extends Controller
                 $paquetes = Paquete::with('servicios','imagenes')->all();
                 break;
             case 'Cliente':
-                $paquetes = Paquete::with('servicios','imagenes')->where('activo',true)->get();
-                break;
-            
-            default:
-                # code...
+            case 'Empleado':
+                    $paquetes = Paquete::with('servicios','imagenes')->where('activo',true)->get();
                 break;
         }
         return response()->json($paquetes);
     }
 
-    /**
-     * Store a newly created resource in storage.\
-     * @return [vista] [en la que se muestra]
-     */
-    public function store(Request $request)
+
+    public function store(StorePaqueteRequest $request)
     {
-        $this->authorize('create', Paquete::class);
-        $paquete = new Paquete();
-        $paquete->nombre = $request->nombre;
-        $paquete->activo = $request->activo;
-        $paquete->precio = $request->precio;
-        $paquete->descripcion = $request->descripcion;
-        $paquete->save();
+        if(Gate::allows('create', Paquete::class)){
+            $paquete = new Paquete();
+            $datos = $request->all();
+            $paquete->fill($datos);
+            $paquete->load('imagenes','servicios');
+            $paquete->save();
 
-        $paquete = Paquete::find($paquete->id);
-        $servSelect = $request->select;
-
-        $cantidades = $request->cantidad_serv;
-
-        
-        foreach ($servSelect as $servi) {
-            // Verificar si existe la cantidad asociada a este servicio
-            if (array_key_exists($servi, $cantidades) && $cantidades[$servi] > 0) {
-                $paquete->servicios()->attach($servi, ['servicio_cantidad' => $cantidades[$servi]]);
-            } else {
-                // Si no hay cantidad asociada o es cero, no agregar el servicio
-                if (!array_key_exists($servi, $cantidades) || $cantidades[$servi] != 0) {
-                    $paquete->servicios()->attach($servi);
+            $servicios = $request->select;
+            $cantidades = $request->cantidad_serv;
+            foreach ($servicios as $servicio) {
+                // Verificar si existe la cantidad asociada a este servicio
+                if (array_key_exists($servicio, $cantidades) && $cantidades[$servicio] > 0) {
+                    $paquete->servicios()->attach($servicio, ['servicio_cantidad' => $cantidades[$servicio]]);
+                } else {
+                    // Si no hay cantidad asociada o es cero, no agregar el servicio
+                    if (!array_key_exists($servicio, $cantidades) || $cantidades[$servicio] != 0) {
+                        $paquete->servicios()->attach($servicio);
+                    }
                 }
             }
+            return response()->json($paquete);
+        }else{
+            return response()->json("Solo el gerente puede crear paquetes",403);
         }
-        
-        /*foreach ($servSelect as $servi) {
-            // Verificar si existe la cantidad asociada a este servicio
-            if (array_key_exists($servi, $cantidades) && $cantidades[$servi] > 0) {
-                $paquete->servicios()->attach($servi, ['servicio_cantidad' => $cantidades[$servi]]);
-            } else {
-                // Si no hay cantidad asociada, simplemente agregar el servicio al paquete
-                $paquete->servicios()->attach($servi);
-            }
-        }*/
-
-        //$paquete -> servicios() -> attach($servSelect);
-        
-        return response()->json(["success"=> "No hay errores"],200);
+        return response()->json($paquete);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show($id)
+    public function show(Paquete $paquete)
     {
         //with('publicas','privadas')->
-        $paquete = Paquete::find($id);
-        $datosPaq = DB::table('paquete_servicio')->get();
-
-        // Obtener los servicios relacionados con este paquete específico.
-        $servicios = $paquete->servicios;
-        return [
-            'paquete' => $paquete->toJson(),
-            'paq_serv' => $datosPaq->toJson(),
-            'servicios' => $servicios->toJson(),
-        ];
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit($id)
-    {
-        $paquete = Paquete::find($id);
-        return view('', compact('paquete'));    
+        $paquete->load('imagenes','servicios');
+        return response()->json($paquete);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(StorePaqueteRequest $request, Paquete $paquete)
     {
-        $this->authorize('update', Paquete::find($id));
-        $paquete = Paquete::find($id);
-        $paquete->nombre = $request->nombre;
-        $paquete->activo = $request->activo;
-        $paquete->precio = $request->precio;
-        $paquete->descripcion = $request->descripcion;
-        $paquete->save(); 
-        $paquete = Paquete::find($paquete->id);
-        $servSelect = $request->select;
-        $paquete -> servicios() -> attach($servSelect);
-        return $paquete->toJson();
+        if(Gate::allows('update', $paquete)){
+            $datos = $request->all();
+            $paquete->fill($datos);
+            $paquete->load('imagenes','servicios');
+            $paquete->save();
+            $servicios = $request->select;
+            $paquete -> servicios() -> attach($servicios);    
+            return response()->json($paquete);
+        }else{
+            return response()->json("Solo el gerente puede actualizar paquetes",403);
+        }
+        return response()->json($paquete);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Paquete $paquete)
     {
-        $this->authorize('delete', Paquete::find($id));
-        $paquete = Paquete::find($id);
-        if ($paquete) {
-            // Obtener los IDs de los servicios asociados al paquete
-            $serviciosIds = $paquete->servicios->pluck('id')->toArray();
-
-            // Utiliza detach para eliminar las relaciones en la tabla pivote
-            $paquete->servicios()->detach($serviciosIds);
-
-            // Procede con la eliminación del paquete
-            $paquete->delete();
-            return response()->json(["success"=> "Paquete eliminado correctamente"],200);
-        }else
-        {
-            return response()->json(["errors"=> "No se pudo eliminar el Paquete"],400);
+        if(Gate::allows('delete',$paquete)){
+                // Obtener los IDs de los servicios asociados al paquete
+                $serviciosIds = $paquete->servicios->pluck('id')->toArray();
+    
+                // Utiliza detach para eliminar las relaciones en la tabla pivote
+                $paquete->servicios()->detach($serviciosIds);
+    
+                // Procede con la eliminación del paquete
+                $paquete->delete();
+                return response()->json($paquete);
+        }else{
+            return response()->json("Solo el gerente puede eliminar paquetes",403);
         }
+        return response()->json($paquete);
     }
 }

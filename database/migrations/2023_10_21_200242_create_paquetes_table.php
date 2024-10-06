@@ -14,9 +14,9 @@ return new class extends Migration
         Schema::create('paquetes', function (Blueprint $table) {
             $table->id();
             $table->string('nombre');
-            $table->boolean('activo')->default(false);
             $table->float('precio');
-            $table->longText('descripcion')->nullable();
+            $table->longText('descripcion');
+            $table->boolean('activo')->default(false);
             $table->timestamps();
         });
     }
