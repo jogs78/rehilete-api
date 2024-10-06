@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Servicio;
 
 use Illuminate\Http\Request;
+use App\Http\Requests\StoreServicioRequest;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 
 class ServicioController extends Controller
 {
@@ -14,88 +16,69 @@ class ServicioController extends Controller
      */
     public function index()
     {
-        $servicios = Servicio::all();
-        return response()->json($servicios,200,['Content-Type'=> 'application/json']);
+        $servicios = Servicio::with('imagenes')->get();
+        return response()->json($servicios);
 
     }
 
-    public function store(Request $request)
+    public function store(StoreServicioRequest $request)
     {
-        try {
-            if (Auth::check()) {
-                // El usuario está autenticado
-                $this->authorize('create', Servicio::class);
-            } else {
-                // El usuario no está autenticado
-                return response()->json(["error" => "Usuario no autenticado"], 401);
-            }
-        } catch (\Exception $e) {
-            \Illuminate\Support\Facades\Log::error("Error en Asegurar Middleware: " . $e->getMessage());
-            //$er = $e->getMessage();
-            return response()->json(["errors" => "Error de servidor"], 500);
+        if(Gate::allows('create' , Servicio::class  )){
+            $servicio = new Servicio();
+            $datos = $request->all();
+            $servicio->fill($datos);
+            $servicio->load('imagenes');
+            $servicio->save();
+            return response()->json($servicio);
+        }else{
+            return response()->json("Solo el gerente puede crear servicios",403);
         }
-        
-        $servicio = new Servicio();
-        $servicio->nombre = $request->nombre;
-        $servicio->precio = $request->precio;
-        $servicio->minimo = $request->minimo;
-        $servicio->descripcion = $request->descripcion;
-        $servicio->save();
-        return response()->json(["success"=> "No hay errores"],200);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show( $id)
+    public function show(Servicio $servicio )
     {
-        /*with('publicas','privadas')->*/
-        $servicio = Servicio::find($id);
-        return $servicio->toJson();
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        $servicio = Servicio::find($id);
-        return view('gerente.servicios.editar-servicio', compact('servicio'));
         
+        $servicio->load('imagenes');
+        return response()->json($servicio);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(StoreServicioRequest $request, Servicio $servicio)
     {
-        $this->authorize('update', Servicio::find($id));
-        $servicio = Servicio::find($id);
 
-            $servicio->nombre = $request->nombre;
-            $servicio->precio = $request->precio;
-            $servicio->descripcion = $request->descripcion;
+        if(Gate::allows('update' , $servicio)){
+            $datos = $request->all();
+            $servicio->fill($datos);
+            $servicio->load('imagenes');
             $servicio->save();
-            
-        return $servicio->toJson();
-
-
+            return response()->json($servicio);
+        }else{
+            return response()->json("Solo el gerente puede actualizar servicios",403);
+        }            
+        return response()->json($servicio);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Servicio $servicio)
     {
-        $this->authorize('delete', Servicio::find($id));
-        $servicio = Servicio::find($id);
-        if ($servicio) {
+        if(Gate::allows('delete' , $servicio)){
+            //determinar si puedo eliminarlo
+            if($servicio->eventos()->count()>0) return response()->json("Este servicio es usado en algun evento",422);
+            foreach($servicio->paquetes as $paquete)
+                if($paquete->eventos()->count()>0) return response()->json("Este servicio es usado en en un paquete que esta usado en algun evento",422);
+
             $servicio->delete();
-            return response()->json(["success"=> "Servicio eliminado correctamente"],200);
-        }else
-        {
-            return response()->json(["errors"=> "No se pudo eliminar el servicio"],400);
-        }
-        
+            return response()->json($servicio);
+        }else{
+            return response()->json("Solo el gerente puede eliminar servicios",403);
+        }            
+        return response()->json($servicio);
     }
 }

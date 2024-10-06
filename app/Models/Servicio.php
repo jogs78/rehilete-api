@@ -10,13 +10,7 @@ class Servicio extends Model
 {
     use HasFactory;
     protected $primaryKey = 'id';
-    protected $fillable = [
-        'id',
-        'nombre',
-        'precio',
-        'descripcion',
-        'minimo'
-    ];
+    protected $fillable = ['id', 'nombre', 'precio', 'descripcion', 'minimo', ];
 
     public function paquetes() {
         return $this->belongsToMany(Paquete::class);
