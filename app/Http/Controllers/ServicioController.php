@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests\StoreServicioRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Log;
 
 class ServicioController extends Controller
 {
@@ -16,6 +17,7 @@ class ServicioController extends Controller
      */
     public function index()
     {
+        Log::channel('debug')->info('index de servicios.');
         $servicios = Servicio::with('imagenes')->get();
         return response()->json($servicios);
 
@@ -40,7 +42,8 @@ class ServicioController extends Controller
      */
     public function show(Servicio $servicio )
     {
-        
+        Log::channel('debug')->info('show de servicios.');
+
         $servicio->load('imagenes');
         return response()->json($servicio);
     }
@@ -48,11 +51,15 @@ class ServicioController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(StoreServicioRequest $request, Servicio $servicio)
+    public function update(Request $request, Servicio $servicio)
     {
+
+        Log::channel('debug')->info('update1 de servicios.:' . json_encode($request->all()) );
+        Log::channel('debug')->info('update1 de servicios.:' . $servicio->toJson() );
 
         if(Gate::allows('update' , $servicio)){
             $datos = $request->all();
+            Log::channel('debug')->info('update de servicios.:' . json_encode($datos) );
             $servicio->fill($datos);
             $servicio->load('imagenes');
             $servicio->save();

@@ -42,8 +42,6 @@ class StoreServicioRequest extends FormRequest
             'minimo.numeric'       =>'El minimo del servicio debe ser una numerico.',
 
             'minimo.integer'        =>'El minimo del servicio debe ser un numero entero.',
-            
-
         ];
     }
 
