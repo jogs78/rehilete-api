@@ -22,7 +22,11 @@ class PaquetePolicy
      */
     public function update(Usuario $user, Paquete $paquete): bool
     {
-        return $user->rol === 'Gerente';
+        if( $user->rol === 'Gerente'){
+            if($paquete->eventosConfirmadosPendientes->count()>0) return false;
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -30,6 +34,11 @@ class PaquetePolicy
      */
     public function delete(Usuario $user, Paquete $paquete): bool
     {
-        return $user->rol === 'Gerente';
+        if( $user->rol === 'Gerente'){
+            if($paquete->eventosConfirmadosPendientes->count()>0) return false;
+            return true;
+        }
+        return false;
+
     }
 }

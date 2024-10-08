@@ -5,7 +5,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
-use App\Http\Requests\StorePaqueteRequest;
 
 class Paquete extends Model
 {
@@ -20,9 +19,22 @@ class Paquete extends Model
         return $this->hasMany(Evento::class);
     }
 
+    public function eventosConfirmados() {
+        return $this->hasMany(Evento::class)->where('confirmacion', 'confirmado');
+    }
+
+    public function eventosConfirmadosPendientes() {
+        return $this->hasMany(Evento::class)
+                    ->where('confirmacion', 'confirmado')
+                    ->where('realizado', false);
+    }
+    
+    public function eventosNoConfirmados() {
+        return $this->hasMany(Evento::class)->where('confirmacion', 'sin confirmar');
+    }
+
     public function imagenes(): MorphToMany
     {
         return $this->morphToMany(Medio::class, 'usa','usables');
     }
-
 }

@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Paquete;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use App\Http\Requests\StorePaqueteRequest;
 
@@ -38,20 +37,23 @@ class PaqueteController extends Controller
         if(Gate::allows('create', Paquete::class)){
             $paquete = new Paquete();
             $datos = $request->all();
+            $datos['activo'] = false;
+//            if(isset($datos['activo']))unset($datos['activo']);
             $paquete->fill($datos);
             $paquete->load('imagenes','servicios');
             $paquete->save();
-
-            $servicios = $request->select;
-            $cantidades = $request->cantidad_serv;
-            foreach ($servicios as $servicio) {
-                // Verificar si existe la cantidad asociada a este servicio
-                if (array_key_exists($servicio, $cantidades) && $cantidades[$servicio] > 0) {
-                    $paquete->servicios()->attach($servicio, ['servicio_cantidad' => $cantidades[$servicio]]);
-                } else {
-                    // Si no hay cantidad asociada o es cero, no agregar el servicio
-                    if (!array_key_exists($servicio, $cantidades) || $cantidades[$servicio] != 0) {
-                        $paquete->servicios()->attach($servicio);
+            if(isset($datos['select'])){
+                $servicios = $request->select;
+                $cantidades = $request->cantidad_serv;
+                foreach ($servicios as $servicio) {
+                    // Verificar si existe la cantidad asociada a este servicio
+                    if (array_key_exists($servicio, $cantidades) && $cantidades[$servicio] > 0) {
+                        $paquete->servicios()->attach($servicio, ['servicio_cantidad' => $cantidades[$servicio]]);
+                    } else {
+                        // Si no hay cantidad asociada o es cero, no agregar el servicio
+                        if (!array_key_exists($servicio, $cantidades) || $cantidades[$servicio] != 0) {
+                            $paquete->servicios()->attach($servicio);
+                        }
                     }
                 }
             }
@@ -75,7 +77,7 @@ class PaqueteController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(StorePaqueteRequest $request, Paquete $paquete)
+    public function update(Request $request, Paquete $paquete)
     {
         if(Gate::allows('update', $paquete)){
             $datos = $request->all();
@@ -86,7 +88,7 @@ class PaqueteController extends Controller
             $paquete -> servicios() -> attach($servicios);    
             return response()->json($paquete);
         }else{
-            return response()->json("Solo el gerente puede actualizar paquetes",403);
+            return response()->json("Solo el gerente puede actualizar paquetes o este paquete tiene eventos confirmado y pendiente",403);
         }
         return response()->json($paquete);
     }
@@ -107,8 +109,13 @@ class PaqueteController extends Controller
                 $paquete->delete();
                 return response()->json($paquete);
         }else{
-            return response()->json("Solo el gerente puede eliminar paquetes",403);
+            return response()->json("Solo el gerente puede eliminar paquetes o o este paquete tiene eventos confirmado y pendiente",403);
         }
         return response()->json($paquete);
+    }
+    public function activar(Paquete $paquete){
+        $paquete->activo = !$paquete->activo;
+        $paquete->save();
+        return response()->json($paquete);        
     }
 }
