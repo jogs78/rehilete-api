@@ -37,8 +37,8 @@ Route::post('entrada', [PuertaController::class, 'entrada']);
 Route::post('salida', [PuertaController::class,'salida'])->middleware('conToken')->name('usuarios.avatar');
 
 
-Route::apiResource('servicios', ServicioController::class, ['only'   => ['index']]);
-Route::apiResource('servicios', ServicioController::class, ['except' => ['index']])->middleware('conToken');
+Route::apiResource('servicios', ServicioController::class, ['only'   => ['index','show']]);
+Route::apiResource('servicios', ServicioController::class, ['except' => ['index','show']])->middleware('conToken');
 Route::apiResource('servicios.medios', ServicioMedioController::class, ['only' => ['index']]);
 Route::apiResource('servicios.medios', ServicioMedioController::class, ['except' => ['index','update']])->middleware('conToken');
 
@@ -50,10 +50,12 @@ route::get('incializar', [AyudaController::class,'inicializar'])->middleware('co
 Route::get('usuarios/{usuario}/avatar', [UsuarioController::class,'avatar'])->middleware('conToken'); //no valida... la bd si, pero marca error 500, puede dar de alta varias veces al mismo
 Route::post('usuarios/{usuario}/avatar', [UsuarioController::class,'avatar2'])->middleware('conToken'); //no valida... la bd si, pero marca error 500, puede dar de alta varias veces al mismo
 
-Route::apiResource('paquetes', PaqueteController::class, ['only'   => ['index']]);
-Route::apiResource('paquetes', PaqueteController::class, ['except' => ['index']])->middleware('conToken');
+Route::apiResource('paquetes', PaqueteController::class, ['only'   => ['index','show']]);
+Route::apiResource('paquetes', PaqueteController::class, ['except' => ['index','show']])->middleware('conToken');
+Route::put('paquetes/activar/{paquete}',[PaqueteController::class,'activar'])->middleware('conToken')->name('paquetes.activar');
 Route::apiResource('paquetes.medios', PaqueteMedioController::class, ['only' => ['index']]);
 Route::apiResource('paquetes.medios', PaqueteMedioController::class, ['except' => ['index','update']])->middleware('conToken');
+Route::apiResource('paquetes.servicios', PaqueteMedioController::class, ['only' => ['store','update','destroy']]);
 
 Route::apiResource('eventos', EventoController::class)->middleware('conToken');//
 Route::put('eventos/{evento}/confirmar',[EventoController::class, 'confirmar'])->middleware('conToken');//
