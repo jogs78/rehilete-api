@@ -12,6 +12,7 @@ use App\Http\Controllers\ServicioController;
 use App\Http\Controllers\ServicioMedioController;
 use App\Http\Controllers\PaqueteController;
 use App\Http\Controllers\PaqueteMedioController;
+use App\Http\Controllers\PaqueteServicioController;
 use App\Http\Controllers\UsablePublicaController;
 use App\Http\Controllers\UsuarioController;
 use Illuminate\Http\Request;
@@ -55,7 +56,7 @@ Route::apiResource('paquetes', PaqueteController::class, ['except' => ['index','
 Route::put('paquetes/activar/{paquete}',[PaqueteController::class,'activar'])->middleware('conToken')->name('paquetes.activar');
 Route::apiResource('paquetes.medios', PaqueteMedioController::class, ['only' => ['index']]);
 Route::apiResource('paquetes.medios', PaqueteMedioController::class, ['except' => ['index','update']])->middleware('conToken');
-Route::apiResource('paquetes.servicios', PaqueteMedioController::class, ['only' => ['store','update','destroy']]);
+Route::apiResource('paquetes.servicios', PaqueteServicioController::class, ['except' => ['show','update']]);
 
 Route::apiResource('eventos', EventoController::class)->middleware('conToken');//
 Route::put('eventos/{evento}/confirmar',[EventoController::class, 'confirmar'])->middleware('conToken');//
