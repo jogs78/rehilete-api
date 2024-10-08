@@ -9,7 +9,9 @@ class Evento extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'realizado', // Agrega cualquier otro campo que desees incluir aquí
+        'nombre', 'usuario_id', 'paquete_id', 'paquete_precio', 'precio',
+        'fecha', 'hora_inicio', 'hora_fin', 'descripcion', 'gerente_id',
+        'num_personas', 'confirmacion', 'realizado', 'motivo',
     ];
 
     public function usuario()

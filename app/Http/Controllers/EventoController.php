@@ -129,7 +129,7 @@ class EventoController extends Controller
         $evento->num_personas = $request->num_personas; //en teoria deberia dar error si es mas de 100
         $evento->save();
         $acumulado = $evento->paquete_precio;
-        $evento = Evento::find($evento->id);
+//        $evento = Evento::find($evento->id);
         if(isset($request -> idservicios)){
             $serviSelect = $request -> idservicios;
             foreach ($serviSelect as $servi) {
@@ -147,13 +147,13 @@ class EventoController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Request $r, $id)
+    public function show(Request $r, Evento  $evento)
     {
 
 //        $usuario = Auth::getUser();
 //        return response()->json($usuario);
 //        Log::channel('debug')->info('Este es un mensaje informativo.');
-        $evento = Evento::with('servicios', 'fotos')->find($id);
+        $evento->load('servicios', 'fotos');
         $this->authorize('view',$evento );
 //        with('servicios')
 
@@ -167,47 +167,37 @@ class EventoController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Evento  $evento)
     {
-        $evento = Evento::find($id);
-
-        $this->authorize('view',$evento );
-
-        //$usuario = $request->user();
-        //return $usuario;
         $this->authorize('update', $evento);
-        $evento->nombre = $request->nombre;
-        $evento->usuario_id = $request->usuario_id;
-        $evento->paquete_id = $request->paquete_id;
-        $evento->precio = $request->precio;
-        $evento->fecha = date($request-> fecha);
-        $evento->hora_inicio = Carbon::parse($request->hora_inicio)->format('H:i:s');
-        $evento->hora_fin = Carbon::parse($request->hora_fin)->format('H:i:s');
-        $evento->descripcion = $request->descripcion;
-        $evento->num_personas = $request->num_personas;
-        $evento->save();
-        
-        $evento = Evento::find($evento->id);
-        $serviSelect = $request -> idservicio;
-        $evento->servicios()->attach($serviSelect);
+        $datos=$request->all();
+        if(isset($datos['fecha']))$datos['fecha']=date($datos['fecha']);
+        if(isset($datos['hora_inicio']))$datos['hora_inicio']=Carbon::parse($datos['hora_inicio'])->format('H:i:s');
+        if(!isset($datos['hora_fin'])){
+            $datos['hora_fin'] = $hora_inicial = Carbon::parse($request->hora_inicio)->addHours(6)->format('H:i:s');
+        }else $datos['hora_fin']=Carbon::parse($datos['hora_fin'])->format('H:i:s');
+        $evento->save();        
+        if(isset($datos['idservicio'])){
+            //falta checar si le mandaron varios o uno
+            $serviciosSeleccionados = $datos['idservicio'];
+            $evento->servicios()->attach($serviciosSeleccionados);
+        }
         $evento->load('servicios', 'fotos');
         return response()->json($evento);
-
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Evento  $evento)
     {
-        $this->authorize('delete', Evento::find($id));
-        $evento = Evento::find($id);
+        $this->authorize('delete', $evento);
         if ($evento) {
             $evento->delete();
-            return response()->json(["success"=> "Evento eliminado correctamente"],200);
+            return response()->json($evento,200);
         }else
         {
-            return response()->json(["errors"=> "No se pudo eliminar el Evento"],400);
+            return response()->json($evento,400);
         }
     }
 
@@ -258,7 +248,6 @@ class EventoController extends Controller
             return response()->json($evento);
         }else{
             return response()->json("Solo el gerente puede confirmar eventos",403);
-
         }
 
         if ($usuario->rol == 'Gerente' ) {
