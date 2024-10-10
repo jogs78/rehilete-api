@@ -64,6 +64,10 @@ return [
             'root' => public_path('fotos'),
             'throw' => false,
             'visibility' => 'private',
+            'permissions' => [
+                    'file' => 0644,
+                    'dir' => 0755,
+                ],
         ],
 
         's3' => [
