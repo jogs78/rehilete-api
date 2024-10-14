@@ -53,8 +53,8 @@ Route::post('usuarios/{usuario}/avatar', [UsuarioController::class,'avatar2'])->
 Route::apiResource('paquetes', PaqueteController::class, ['only'   => ['index','show']]);
 Route::apiResource('paquetes', PaqueteController::class, ['except' => ['index','show']])->middleware('conToken');
 Route::put('paquetes/activar/{paquete}',[PaqueteController::class,'activar'])->middleware('conToken')->name('paquetes.activar');
-Route::apiResource('paquetes.medios', PaqueteMedioController::class, ['only' => ['index']]);
-Route::apiResource('paquetes.medios', PaqueteMedioController::class, ['except' => ['index','update']])->middleware('conToken');
+Route::apiResource('paquetes.medios', PaqueteMedioController::class, ['only' => ['index','show']]);
+Route::apiResource('paquetes.medios', PaqueteMedioController::class, ['except' => ['index','show','update']])->middleware('conToken');
 Route::apiResource('paquetes.servicios', PaqueteMedioController::class, ['only' => ['store','update','destroy']]);
 
 Route::apiResource('eventos', EventoController::class)->middleware('conToken');//
