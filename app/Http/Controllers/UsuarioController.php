@@ -18,7 +18,7 @@ class UsuarioController extends Controller
      */
     public function index()
     {
-        $this->authorize('viewAny', Usuario::class );
+        //falta como poner las politicas
         $usuarios = Usuario::all();
         return response()->json($usuarios);
     }

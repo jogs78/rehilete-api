@@ -14,7 +14,8 @@ class PaquetePolicy
      */
     public function create(Usuario $user): bool
     {
-        return $user->rol === 'Gerente';
+        return $user->rol != 'Empleado';
+        //realmente hay mas validaciones
     }
 
     /**

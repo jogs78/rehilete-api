@@ -45,24 +45,12 @@ class EventoController extends Controller
      */
     public function index(Request $request)
     {
-        $authorizationHeader = $request->header('Authorization');
-        // Realizar la lógica de verificación del token aquí
-        // Normalmente, el token estará en el formato "Bearer tu_token_aqui"
-        $token = str_replace('Bearer ', '', $authorizationHeader);
-        $usuario = Usuario::where('token',$token)->first();
-        //$servicios = Servicio::with('nombre')->find('id');
-        //dd();
-        //return response()->json([$usuario->rol],299);
 
-       
+        $usuario = Auth::getUser();
 
-//        $usuario = $request->user()->rol;
-        
-        $eventos2 = Evento::where('id','usuario_id')->get();
-        $paquetes = Paquete::pluck('id','nombre');
         switch ($usuario->rol) {
             case 'Gerente':
-                $eventos = Evento::with('servicios', 'fotos')->all();
+                $eventos = Evento::with('servicios', 'fotos')->get();
                 break;
             case 'Cliente':
                 $eventos = Evento::with('servicios', 'fotos')->where('usuario_id', $usuario->id)->get();
@@ -74,48 +62,27 @@ class EventoController extends Controller
                 # code...
                 break;
         }
-
-        $servicios = Servicio::pluck('id','nombre');
-        $datosPivot = DB::table('evento_servicio')->get();
-        $datosPaq = DB::table('paquete_servicio')->get();
-        //$eventosServicios = $eventos->servicios;
-        //$eventos = DB::table('eventos')->get();
-
-        
-/*
-        return response()->json([
-            'servicios'=> $servicios,
-            'eventos'=> $eventos,
-            'datosextras'=> $datosPivot,
-            'paquetes'=> $paquetes,
-            'datospaquetes'=> $datosPaq,
-        ]);
- */
     return response()->json($eventos);
 
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
 
     /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
     {
+        if(Gate::allows('create', Paquete::class)){
+
+        }else{
+
+        }
 
         //checar quien puede crear un evento
         $usuario = Auth::getUser();
         $hora_inicial = Carbon::parse($request->hora_inicio);
         $hora_final = $hora_inicial->addHours(6);
 
-
-        $this->authorize('create', Evento::class);
         $evento = new Evento();
         $evento->nombre = $request->nombre;
         $evento->usuario_id = $usuario->id;

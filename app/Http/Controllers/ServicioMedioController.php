@@ -37,6 +37,7 @@ class ServicioMedioController extends Controller
             Log::channel('debug')->info('IMAGEN x.');
             $nombre = time().rand(1,100).'.'.$medio->extension();
             $medio->storeAs('', $nombre,'publicas');
+            
             //Storage::disk('publicas')->putFile('', $medio, $nombre);            
             $imagen = new Medio();
             $imagen->ruta = $nombre;
