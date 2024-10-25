@@ -6,10 +6,14 @@ use App\Models\Usuario;
 use App\Models\Medio;
 use Illuminate\Http\Request;
 use App\Http\Requests\StoreUsuarioRequest;
+use App\Http\Requests\UpdateUsuarioRequest;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Storage;
+
 
 class UsuarioController extends Controller
 {
@@ -18,9 +22,12 @@ class UsuarioController extends Controller
      */
     public function index()
     {
-        $this->authorize('viewAny', Usuario::class );
-        $usuarios = Usuario::all();
-        return response()->json($usuarios);
+        if(Gate::allows('viewAny' , Usuario::class )){  
+            $usuarios = Usuario::all();
+            return response()->json($usuarios);
+        }else{
+            return response()->json("Solo el gerente puede listar usuarios",403);
+        }
     }
 
     /**
@@ -28,26 +35,36 @@ class UsuarioController extends Controller
      */
     public function store(StoreUsuarioRequest $request)
     {
+        if(Gate::allows('create', Usuario::class)){  
+            $usuario = new Usuario();
+            $usuario->nombre = $request->nombre;
+            $usuario->apellido = $request->apellido;
+            $usuario->nombre_usuario = $request->nombre_usuario;
+            $usuario->contraseña = Hash::make($request->passw);
+            $usuario->rol = $request->rol;
+            $usuario->fecha_nacimiento = $request->fecha_nacimiento;
+            $usuario->email = $request->email;
+            $usuario->telefono = $request->telefono;
 
+            ob_start();
+            var_dump($request->hasFile('avatar'));
+            $salida = ob_get_clean();
+            Log::channel('debug')->info('hasFile?:' . $salida );
 
-        $this->authorize('create', Usuario::class );
-        $usuario = new Usuario();
-        $usuario->nombre = $request->nombre;
-        $usuario->apellido = $request->apellido;
-        $usuario->nombre_usuario = $request->nombre_usuario;
-        $usuario->contraseña = Hash::make($request->passw);
-        $usuario->rol = $request->rol;
-        $usuario->fecha_nacimiento = $request->fecha_nacimiento;
-        $usuario->email = $request->email;
-        $usuario->telefono = $request->telefono;
-        if ($request->hasFile('avatar')) {
-            $imagen = $request->file('avatar');
-            $nombre = time().rand(1,100).'.'.$imagen->extension();
-            $imagen->storeAs('', $nombre,'avatares');
-            $usuario->avatar = $nombre;
+            if ($request->hasFile('avatar')) {
+                $imagen = $request->file('avatar');
+                $nombre = time().rand(1,100).'.'.$imagen->extension();
+                $imagen->storeAs('', $nombre,'avatares');
+                $usuario->avatar = $nombre;
+                Log::channel('debug')->info('nombre:' . $nombre );
+
+            }
+            $usuario->save();
+            return response()->json($usuario);    
+        }else{
+            return response()->json("Solo el gerente puede crear usuarios.",403);
         }
-        $usuario->save();
-        return response()->json($usuario);
+
     }
 
     /**
@@ -55,40 +72,46 @@ class UsuarioController extends Controller
      */
     public function show(Usuario $usuario)
     {
-        //$usuario->load('eventos');
-        return response()->json($usuario);
+        if(Gate::allows('view' , $usuario )){  
+            //$usuario->load('eventos');
+            return response()->json($usuario);
+        }else{
+            return response()->json("El usuario actual no puede ver a este usuario.",403);
+        }
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Usuario $usuario)
+    public function update(UpdateUsuarioRequest $request, Usuario $usuario) //falta validar....
     {
-        
-        $this->authorize('update', $usuario );
-        $usuario->fill($request->all());
-        if (is_null($request->passw)) $usuario->contraseña = Hash::make($request->passw);
-/*
-        $usuario->nombre = $request->nombre;
-        $usuario->apellido = $request->apellido;
-        $usuario->nombre_usuario = $request->nombre_usuario;
-        $usuario->rol = $request->rol;
-        $usuario->fecha_nacimiento = $request->fecha_nacimiento;
-        $usuario->direccion = $request->direccion;
-        $usuario->email = $request->email;
-        $usuario->telefono = $request->telefono;
-*/      $resp = $request->hasFile('avatar');
-        Log::channel('debug')->info("file:" . $resp . ':');
-        if ($request->hasFile('avatar')) {
-            Log::channel('debug')->info("Usuario envio avatar:" );
+        if(Gate::allows('update', $usuario )){  
+            ob_start();
+            var_dump($request->all());
+            $salida = ob_get_clean();
+            Log::channel('debug')->info('dump:' . $salida );
 
-            $imagen = $request->file('avatar');
-            $nombre = time().rand(1,100).'.'.$imagen->extension();
-            $imagen->storeAs('', $nombre,'avatares');
-            $usuario->avatar = $nombre;
+            $usuario->fill($request->all());
+            if (is_null($request->passw)) $usuario->contraseña = Hash::make($request->passw);
+            $resp = $request->hasFile('avatar');
+            Log::channel('debug')->info("hay avatar?:" . $resp . ':');
+            if ($request->hasFile('avatar')) {
+                Log::channel('debug')->info("Usuario envio avatar:" );
+                if(!is_null($usuario->avatar)){
+                    Storage::disk('avatares')->delete($usuario->avatar);
+                    $usuario->avatar=NULL;
+                }
+                $imagen = $request->file('avatar');
+                $nombre = time().rand(1,100).'.'.$imagen->extension();
+                $imagen->storeAs('', $nombre,'avatares');
+                $usuario->avatar = $nombre;
+            }
+            $usuario->save();
+                
+            return response()->json($usuario);
+        }else{
+            return response()->json("El usuario actual no puede actualizar a este usuario.",403);
         }
-        $usuario->save();
-        return response()->json($usuario);
     }
 
     /**
@@ -96,45 +119,68 @@ class UsuarioController extends Controller
      */
     public function destroy(Usuario $usuario)
     {
-        $this->authorize('delete', $usuario );
-        if($usuario->eventos()->count()>0){
-            return response()->json("Imposible eliminar", 409);
+        if(Gate::allows('delete', $usuario )){  
+            if($usuario->eventos()->count()>0){
+                return response()->json("Imposible eliminar a este usuario", 409);
+            }else{
+                if(!is_null($usuario->avatar)){
+                    Storage::disk('avatares')->delete($usuario->avatar);
+                    $usuario->avatar=NULL;
+                }
+                $usuario->delete();
+                return response()->json($usuario);
+            }
         }else{
-            $usuario->delete();
-            return response()->json($usuario);
+            return response()->json("El usuario actual no puede eliminar a este usuario.",403);
         }
     }
 
     public function verAvatar(Usuario $usuario)
     {
-        $this->authorize('verAvatar', $usuario );
-        Log::channel('debug')->info("Usuario ver avatar:" . $usuario->toJson());
-        if ( is_null ($usuario->avatar)){
-            return response()->download(storage_path('app/avatares').'/null.jpg');
+        if(Gate::allows('verAvatar' , $usuario )){  
+            //$usuario->load('eventos');
+            //return response()->json($usuario);
+            if ( is_null ($usuario->avatar)){
+                return response()->download(storage_path('app/avatares').'/null.png');
+            }else{
+                return response()->download(storage_path('app/avatares').'/'.$usuario->avatar);
+            }    
         }else{
-            return response()->download(storage_path('app/avatares').'/'.$usuario->avatar);
+            return response()->json("El usuario actual no puede ve el Avatar de este usuario.",403);
         }
     }
     public function subirAvatar(Request $request, Usuario $usuario)
     {
-        $this->authorize('subirAvatar', $usuario );
-        if ($request->hasFile('avatar')) {
-            $imagen = $request->file('avatar');
-            $nombre = time().rand(1,100).'.'.$imagen->extension();
-            $imagen->storeAs('', $nombre,'avatares');
-            $usuario->avatar = $nombre;
+        if(Gate::allows('subirAvatar' , $usuario )){  
+            //$usuario->load('eventos');
+            if ($request->hasFile('avatar')) {
+                $imagen = $request->file('avatar');
+                $nombre = time().rand(1,100).'.'.$imagen->extension();
+                if(!is_null($usuario->avatar)){
+                    Storage::disk('avatares')->delete($usuario->avatar);
+                    $usuario->avatar=NULL;
+                }
+                $imagen->storeAs('', $nombre,'avatares');
+                $usuario->avatar = $nombre;
+            }
+            $usuario->save();
+            return response()->json($usuario);
+        }else{
+            return response()->json("El usuario actual no puede poner el Avatar de este usuario.",403);
         }
-        $usuario->save();
-        //return $usuario->toJson();
-        return response()->json($usuario);
     }
     public function borrarAvatar(Request $request, Usuario $usuario)
     {
-        $this->authorize('borrarAvatar', $usuario );
-        Log::channel('debug')->info("Usuario BORRAR avatar:" . $usuario->toJson());
-        if ( !is_null ($usuario->avatar))$usuario->avatar=NULL;
-        $usuario->save();
-        //return $usuario->toJson();
-        return response()->json($usuario);
+        if(Gate::allows('borrarAvatar' , $usuario )){  
+            //$usuario->load('eventos');
+            if(!is_null($usuario->avatar)){
+                Storage::disk('avatares')->delete($usuario->avatar);
+                $usuario->avatar=NULL;
+            }
+            $usuario->save();
+            return response()->json($usuario);
+        }else{
+            return response()->json("El usuario actual no puede borrar el Avatar de este usuario.",403);
+        }
     }
 }

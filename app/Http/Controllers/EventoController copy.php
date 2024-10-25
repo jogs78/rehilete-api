@@ -149,13 +149,14 @@ class EventoController extends Controller
         if(Gate::allows('update', $evento )){
             $usuario = Auth::getUser();
             $gerente = $usuario->rol == 'Gerente';
-            $acumulado = Paquete::find($evento->paquete_id)->precio;
+            $puso_fin = isset($request->hora_fin);
+            $puso_precio = isset($request->precio);
             $datos=$request->all();
 
             if(isset($datos['nombre']))$evento->nombre = $datos['nombre'];
             if(isset($datos['usuario_id']))$evento->usuario_id = $datos['usuario_id'];
             if(isset($datos['paquete_id']))$evento->paquete_id = $datos['paquete_id'];
- //           if($gerente && isset($datos['precio']))$evento->precio = $datos['precio'];
+            if($gerente && isset($datos['precio']))$evento->precio = $datos['precio'];
             if(isset($datos['fecha']))$evento->fecha =date($datos['fecha']);
             if(isset($datos['hora_inicio']))$evento->hora_inicio = Carbon::parse($datos['hora_inicio'])->format('H:i:s');
 
@@ -166,20 +167,16 @@ class EventoController extends Controller
                 $evento->hora_fin= Carbon::parse($request->hora_inicio)->addHours(6)->format('H:i:s');
             if(isset($datos['descripcion']))$evento->descripcion = $datos['descripcion'];
     
+            
+            $evento->save();        
             if(isset($datos['servicios'])){
-                $evento->servicios()->detach();
-                foreach ($datos['servicios'] as $servicio) {
-                    $servicio = Servicio::find($servicio);
-                    $acumulado += $servicio->precio;
-                    $evento -> servicios() -> attach($servicio,['servicio_precio'=> $servicio->precio]);
-                }
+                //falta checar si le mandaron varios o uno
+                $serviciosSeleccionados = $datos['servicios'];
+                $evento->servicios()->attach($serviciosSeleccionados);
             }
-
-            if($gerente && isset($datos['precio']))$evento->precio = $datos['precio'];
-            else $evento->precio =$acumulado;
-            $evento->save();
             $evento->load('servicios', 'fotos');
             return response()->json($evento);
+    
         }else{
             return response()->json("El usuario actual no puede actualizar este evento",403);
         }
@@ -193,7 +190,6 @@ class EventoController extends Controller
     {
         $this->authorize('delete', $evento);
         if ($evento) {
-            $evento->servicios()->detach();
             $evento->delete();
             return response()->json($evento,200);
         }else

@@ -45,11 +45,14 @@ Route::apiResource('servicios.medios', ServicioMedioController::class, ['except'
 
 
 
-Route::apiResource('usuarios', UsuarioController::class)->middleware('conToken'); //pero solo debe ser con cierto nivel de usuario, de eso se encarga UsuarioPolicy, pero creo no esta implementado
-Route::post('usuarios/registrar', [AyudaController::class,'registroUsuario']); //no valida... la bd si, pero marca error 500, puede dar de alta varias veces al mismo
+Route::apiResource('usuarios', UsuarioController::class)->middleware('conToken'); 
+Route::post('usuarios/registrar', [AyudaController::class,'registroUsuario']);
+Route::get('usuarios/{usuario}/avatar', [UsuarioController::class,'verAvatar'])->middleware('conToken');
+Route::post('usuarios/{usuario}/avatar', [UsuarioController::class,'subirAvatar'])->middleware('conToken');
+Route::delete('usuarios/{usuario}/avatar', [UsuarioController::class,'borrarAvatar'])->middleware('conToken');
+
 route::get('incializar', [AyudaController::class,'inicializar'])->middleware('conToken');
-Route::get('usuarios/{usuario}/avatar', [UsuarioController::class,'avatar'])->middleware('conToken'); //no valida... la bd si, pero marca error 500, puede dar de alta varias veces al mismo
-Route::post('usuarios/{usuario}/avatar', [UsuarioController::class,'avatar2'])->middleware('conToken'); //no valida... la bd si, pero marca error 500, puede dar de alta varias veces al mismo
+
 
 Route::apiResource('paquetes', PaqueteController::class, ['only'   => ['index','show']]);
 Route::apiResource('paquetes', PaqueteController::class, ['except' => ['index','show']])->middleware('conToken');
@@ -61,10 +64,11 @@ Route::apiResource('paquetes.servicios', PaqueteServicioController::class, ['exc
 Route::apiResource('eventos', EventoController::class)->middleware('conToken');//
 Route::put('eventos/{evento}/confirmar',[EventoController::class, 'confirmar'])->middleware('conToken');//
 Route::put('eventos/{evento}/rechazar',[EventoController::class, 'rechazar'])->middleware('conToken');//
+
 //estos deben ser nested tanto gastos como abonos
-Route::put('actualizar/evento/{evento}', [EventoController::class,'actualizarEstatus'])->middleware('conToken');
+Route::apiResource('abonos', AbonoController::class)->middleware('conToken');
+
 Route::apiResource('gastos', GastoController::class)->middleware('conToken');
-Route::apiResource('abonos',AbonoController::class)->middleware('conToken');
 
 Route::apiResource('fotos', FotoController::class, ['only' => ['show']])->middleware('conToken');
 Route::apiResource('evento.fotos', EventoFotoController::class,['except' => ['show', 'update']])->middleware('conToken');

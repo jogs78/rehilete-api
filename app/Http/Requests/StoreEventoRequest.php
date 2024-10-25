@@ -21,32 +21,27 @@ class StoreEventoRequest extends FormRequest
      */
     public function rules(): array
     {
+        $reglas = [
+            'nombre' => 'required',
+            'paquete_id' => 'required|exists:paquetes,id',
+            'fecha' => ['required', 'date', 'date_format:Y-m-d'],
+//            'hora_inicio' => ['required', 'integer', 'between:0,23'],
+            'hora_inicio' => ['required', 'date_format:H'],
+            'descripcion' => 'required',
+            'num_personas' => ['required', 'integer', 'between:1,100'],
+            'servicios' => 'nullable|array', // Permite que 'servicios' sea nulo o un arreglo
+            'servicios.*' => 'exists:servicios,id', // Cada elemento debe existir en la tabla 'servicios'
+        ];
         if(Auth::user()->rol == 'Cliente')
-            return [
-                'nombre' => 'required',
-                'paquete_id' => 'required|exists:paquetes,id',
-                'fecha' => ['required', 'date', 'date_format:Y-m-d'],
-                'hora_inicio' => ['required', 'integer', 'between:0,23'],
-//                'hora_inicio' => ['required', 'date_format:H'],
-                'descripcion' => 'required',
-                'num_personas' => ['required', 'integer', 'between:1,100'],
-                'servicios' => 'nullable|array', // Permite que 'servicios' sea nulo o un arreglo
-                'servicios.*' => 'exists:servicios,id', // Cada elemento debe existir en la tabla 'servicios'
-            ];
+            return $reglas;
         else
-            return [
-                'nombre' => 'required',
+            return array_merge($reglas,[
                 'usuario_id' => ['required', 'exists:usuarios,id'],
-                'paquete_id' => 'required|exists:paquetes,id',
-                'fecha' => ['required', 'date', 'date_format:Y-m-d'],
-                'hora_inicio' => ['required', 'integer', 'between:0,23'],
-//                'hora_inicio' => ['required', 'date_format:H'],
-                'hora_fin' => ['nullable', 'integer', 'between:0,23'],
-                'descripcion' => 'required',
-                'num_personas' => ['required', 'integer', 'between:1,100'],
-                'servicios' => 'nullable|array', // Permite que 'servicios' sea nulo o un arreglo
-                'servicios.*' => 'exists:servicios,id', // Cada elemento debe existir en la tabla 'servicios'
-            ];
+//                'hora_fin' => ['nullable', 'integer', 'between:0,23'],
+                'hora_fin' => ['nullable', 'date_format:H'],
+                'precio' => ['nullable', 'numeric'],
+            ]);
+
     }
 
     public function messages()
