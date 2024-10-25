@@ -32,4 +32,15 @@ class Evento extends Model
     public function fotos(){
         return $this->hasMany(Foto::class);
     }
+
+    public function dueño(){
+        return $this->hasOne(Usuario::class, "id","usuario_id");
+    }
+
+    public function gerente(){
+        return $this->hasOne(Usuario::class, "id","gerente_id")
+//        ->withDefault();
+        ->withDefault(["nombre"=>"Sin gerente que haya revisado"]);
+
+    }
 }

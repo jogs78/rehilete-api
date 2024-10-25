@@ -36,5 +36,6 @@ class Paquete extends Model
     public function imagenes(): MorphToMany
     {
         return $this->morphToMany(Medio::class, 'usa','usables');
+        $this->morphOne();
     }
 }

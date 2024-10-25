@@ -3,12 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Evento;
-use App\Models\Usuario;
 use App\Models\Paquete;
 use App\Models\Servicio;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+//use Illuminate\Support\Facades\DB;
+use App\Http\Requests\StoreEventoRequest;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Auth;
@@ -45,24 +45,10 @@ class EventoController extends Controller
      */
     public function index(Request $request)
     {
-        $authorizationHeader = $request->header('Authorization');
-        // Realizar la lógica de verificación del token aquí
-        // Normalmente, el token estará en el formato "Bearer tu_token_aqui"
-        $token = str_replace('Bearer ', '', $authorizationHeader);
-        $usuario = Usuario::where('token',$token)->first();
-        //$servicios = Servicio::with('nombre')->find('id');
-        //dd();
-        //return response()->json([$usuario->rol],299);
-
-       
-
-//        $usuario = $request->user()->rol;
-        
-        $eventos2 = Evento::where('id','usuario_id')->get();
-        $paquetes = Paquete::pluck('id','nombre');
+        $usuario = Auth::getUser();
         switch ($usuario->rol) {
             case 'Gerente':
-                $eventos = Evento::with('servicios', 'fotos')->all();
+                $eventos = Evento::with('servicios', 'fotos')->get();
                 break;
             case 'Cliente':
                 $eventos = Evento::with('servicios', 'fotos')->where('usuario_id', $usuario->id)->get();
@@ -74,74 +60,67 @@ class EventoController extends Controller
                 # code...
                 break;
         }
-
-        $servicios = Servicio::pluck('id','nombre');
-        $datosPivot = DB::table('evento_servicio')->get();
-        $datosPaq = DB::table('paquete_servicio')->get();
-        //$eventosServicios = $eventos->servicios;
-        //$eventos = DB::table('eventos')->get();
-
-        
-/*
-        return response()->json([
-            'servicios'=> $servicios,
-            'eventos'=> $eventos,
-            'datosextras'=> $datosPivot,
-            'paquetes'=> $paquetes,
-            'datospaquetes'=> $datosPaq,
-        ]);
- */
-    return response()->json($eventos);
-
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
+        return response()->json($eventos);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreEventoRequest $request)
     {
 
-        //checar quien puede crear un evento
-        $usuario = Auth::getUser();
-        $hora_inicial = Carbon::parse($request->hora_inicio);
-        $hora_final = $hora_inicial->addHours(6);
+        if(Gate::allows('create' , Evento::class )){  
+            Log::channel('debug')->info("Confirmando");
+            //checar quien puede crear un evento
+            $usuario = Auth::getUser();
+            $gerente = $usuario->rol == 'Gerente';
+
+            ob_start();
+            var_dump($gerente);
+            $salida = ob_get_clean();
+            Log::channel('debug')->info('gerente:' . $salida);
 
 
-        $this->authorize('create', Evento::class);
-        $evento = new Evento();
-        $evento->nombre = $request->nombre;
-        $evento->usuario_id = $usuario->id;
-        $evento->paquete_id = $request->paquete_id;
-        $evento->paquete_precio = Paquete::find($request->paquete_id)->precio;
-        $evento->precio = 0;// $request->precio;
-        $evento->fecha = date($request-> fecha);
-        $evento->hora_inicio = $hora_inicial->format('H:i:s');
-        $evento->hora_fin = $hora_final->format('H:i:s');
-        $evento->descripcion = $request->descripcion;
-        $evento->num_personas = $request->num_personas; //en teoria deberia dar error si es mas de 100
-        $evento->save();
-        $acumulado = $evento->paquete_precio;
-//        $evento = Evento::find($evento->id);
-        if(isset($request -> idservicios)){
-            $serviSelect = $request -> idservicios;
-            foreach ($serviSelect as $servi) {
-                $servicio = Servicio::find($servi);
-                $acumulado += $servicio->precio;
-                $evento -> servicios() -> attach($servi,['servicio_precio'=> $servicio->precio]);
-            }
-            $evento->precio = $acumulado;
+            $hora_inicial = Carbon::parse($request->hora_inicio.":00");
+
+            $hora_final = $gerente ?  Carbon::parse($request->hora_fin.":00") : $hora_inicial->addHours(6);
+
+            $evento = new Evento();
+            $evento->nombre = $request->nombre;
+            $evento->usuario_id = $gerente ? $request->usuario_id : $usuario->id;
+            $evento->paquete_id = $request->paquete_id;
+            $evento->paquete_precio = Paquete::find($request->paquete_id)->precio;
+            $evento->precio = 0;// $request->precio;
+            $evento->fecha = date($request-> fecha);
+            $evento->hora_inicio = $hora_inicial->format('H:i:s');
+            $evento->hora_fin = $gerente ? $request->usuario_id : $usuario->id; $hora_final->format('H:i:s');
+            $evento->descripcion = $request->descripcion;
+            $evento->num_personas = $request->num_personas; //en teoria deberia dar error si es mas de 100
             $evento->save();
-            $evento->load('servicios');
+            $acumulado = $evento->paquete_precio;
+    //        $evento = Evento::find($evento->id);
+
+            if(isset($request -> servicios)){
+                $servicios = $request -> servicios;
+                ob_start();
+                var_dump($servicios);
+                $salida = ob_get_clean();
+                Log::channel('debug')->info('salida:' . $salida);
+                foreach ($servicios as $servicio) {
+                    $servicio = Servicio::find($servicio);
+                    $acumulado += $servicio->precio;
+                    $evento -> servicios() -> attach($servicio,['servicio_precio'=> $servicio->precio]);
+                }
+            }
+                $evento->precio = $acumulado;
+                $evento->save();
+                $evento->load('servicios');
+    
+            return response()->json($evento);
+
+        }else{
+            return response()->json("Solo el gerente puede confirmar eventos",403);
         }
-        return response()->json($evento,200);
     }
 
     /**
