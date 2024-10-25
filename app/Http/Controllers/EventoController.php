@@ -9,6 +9,9 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 //use Illuminate\Support\Facades\DB;
 use App\Http\Requests\StoreEventoRequest;
+use App\Http\Requests\RechazarEventoRequest;
+use App\Http\Requests\ConfirmarEventoRequest;
+use App\Http\Requests\UpdateEventoRequest;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Auth;
@@ -74,16 +77,19 @@ class EventoController extends Controller
             //checar quien puede crear un evento
             $usuario = Auth::getUser();
             $gerente = $usuario->rol == 'Gerente';
-
+            $puso_fin = isset($request->hora_fin);
             ob_start();
-            var_dump($gerente);
+            var_dump($puso_fin);
             $salida = ob_get_clean();
-            Log::channel('debug')->info('gerente:' . $salida);
+            Log::channel('debug')->info('inicio:' . $request->hora_inicio );
 
 
             $hora_inicial = Carbon::parse($request->hora_inicio.":00");
+            $hora_final = $hora_inicial;
+            $gerente && $puso_fin ? $hora_final =  Carbon::parse($request->hora_fin.":00") : $hora_final = Carbon::parse($request->hora_inicio.":00")->addHours(6);
 
-            $hora_final = $gerente ?  Carbon::parse($request->hora_fin.":00") : $hora_inicial->addHours(6);
+            Log::channel('debug')->info('HORAS:' . $hora_inicial->format('H:i:s') );
+            Log::channel('debug')->info('HORAS:' . $hora_final->format('H:i:s') );
 
             $evento = new Evento();
             $evento->nombre = $request->nombre;
@@ -93,9 +99,10 @@ class EventoController extends Controller
             $evento->precio = 0;// $request->precio;
             $evento->fecha = date($request-> fecha);
             $evento->hora_inicio = $hora_inicial->format('H:i:s');
-            $evento->hora_fin = $gerente ? $request->usuario_id : $usuario->id; $hora_final->format('H:i:s');
+            $evento->hora_fin = $hora_final->format('H:i:s');
             $evento->descripcion = $request->descripcion;
             $evento->num_personas = $request->num_personas; //en teoria deberia dar error si es mas de 100
+            if($gerente) $evento->gerente = $usuario->id ;
             $evento->save();
             $acumulado = $evento->paquete_precio;
     //        $evento = Evento::find($evento->id);
@@ -119,7 +126,7 @@ class EventoController extends Controller
             return response()->json($evento);
 
         }else{
-            return response()->json("Solo el gerente puede confirmar eventos",403);
+            return response()->json("Solo el gerente puede agregar eventos",403);
         }
     }
 
@@ -128,26 +135,26 @@ class EventoController extends Controller
      */
     public function show(Request $r, Evento  $evento)
     {
-
-//        $usuario = Auth::getUser();
-//        return response()->json($usuario);
-//        Log::channel('debug')->info('Este es un mensaje informativo.');
-        $evento->load('servicios', 'fotos');
-        $this->authorize('view',$evento );
-//        with('servicios')
-
-//        return response()->json($id);
-       
-        return response()->json($evento);
-//        return $evento->toJson();
+        if(Gate::allows('view', $evento )){
+            $evento->load('servicios', 'fotos');
+            return response()->json($evento);
+        }else{
+            return response()->json("El usuario actual no puede ver este evento",403);
+        }
     }
 
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Evento  $evento)
+    public function update(UpdateEventoRequest $request, Evento  $evento)
     {
+        if(Gate::allows('update', $evento )){
+
+        }else{
+            return response()->json("El usuario actual no puede actualizar este evento",403);
+        }
+
         $this->authorize('update', $evento);
         $datos=$request->all();
         if(isset($datos['fecha']))$datos['fecha']=date($datos['fecha']);
@@ -155,6 +162,8 @@ class EventoController extends Controller
         if(!isset($datos['hora_fin'])){
             $datos['hora_fin'] = $hora_inicial = Carbon::parse($request->hora_inicio)->addHours(6)->format('H:i:s');
         }else $datos['hora_fin']=Carbon::parse($datos['hora_fin'])->format('H:i:s');
+
+        
         $evento->save();        
         if(isset($datos['idservicio'])){
             //falta checar si le mandaron varios o uno
@@ -180,26 +189,18 @@ class EventoController extends Controller
         }
     }
 
-    //LA INTENCION ES QUE LA COMUNICACION CON EL API SEA DIRECTA Y SIN DEPENDENCIAS
-    public function actualizarEstatus(Request $request, string $id){
-        $evento = Evento::find($id);
-        $evento->confirmacion = $request->confirmacion;
-        $evento->gerente_id = $request->gerente_id;
-        $evento->save();
-
-        return $evento->toJson();
-    }
 
     /**
      * Confirmar un evento
      */
-    public function confirmar(Evento $evento)
+    public function confirmar(ConfirmarEventoRequest $request, Evento $evento)
     {
         $usuario = Auth::getUser();
         if(Gate::allows('confirmar' , $evento )){  
             Log::channel('debug')->info("Confirmando");
             $evento->confirmacion = "confirmado";
             $evento->gerente_id = $usuario->id;
+            if(  isset($request->precio) ) $evento->precio  =  $request->precio;            
             $evento->motivo = NULL;
             $evento->save();
             return response()->json($evento);
@@ -213,30 +214,18 @@ class EventoController extends Controller
     /**
      * Rechazar un evento
      */
-
-     //implementar el form request
-    public function rechazar(Request $request,  Evento $evento)
+    public function rechazar(RechazarEventoRequest $request,  Evento $evento)
     {
         $usuario = Auth::getUser();
-        if(Gate::allows('confirmar' , $evento )){  
-            Log::channel('debug')->info("rechzando");
+        if(Gate::allows('rechazar' , $evento )){  
+            Log::channel('debug')->info("rechazando");
             $evento->confirmacion = "rechazado";
             $evento->gerente_id = $usuario->id;
             $evento->motivo = $request->motivo;
             $evento->save();
             return response()->json($evento);
         }else{
-            return response()->json("Solo el gerente puede confirmar eventos",403);
-        }
-
-        if ($usuario->rol == 'Gerente' ) {
-            $evento->confirmacion = "rechazado";
-            $evento->gerente_id = $usuario->id;
-            $evento->motivo = $request->motivo;
-            $evento->save();
-        }else{
             return response()->json("Solo el gerente puede rechazar eventos",403);
-
         }
     }
 

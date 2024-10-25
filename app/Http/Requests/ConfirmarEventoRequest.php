@@ -3,8 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-
-class UpdateUsuarioRequest extends FormRequest
+class ConfirmarEventoRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -21,8 +20,15 @@ class UpdateUsuarioRequest extends FormRequest
      */
     public function rules(): array
     {
+            return [
+                'precio' => 'nullable|number',
+            ];
+    }
+
+    public function messages()
+    {
         return [
-            //
+            '*.number' => 'El campo :attribute debe ser numerico',
         ];
     }
 }

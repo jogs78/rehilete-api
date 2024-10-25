@@ -10,6 +10,7 @@ use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Gate;
 
 class UsuarioController extends Controller
 {
@@ -18,9 +19,12 @@ class UsuarioController extends Controller
      */
     public function index()
     {
-        $this->authorize('viewAny', Usuario::class );
-        $usuarios = Usuario::all();
-        return response()->json($usuarios);
+        if(Gate::allows('viewAny' , Usuario::class )){  
+            $usuarios = Usuario::all();
+            return response()->json($usuarios);
+        }else{
+            return response()->json("Solo el gerente puede listar usuarios",403);
+        }
     }
 
     /**
@@ -28,26 +32,28 @@ class UsuarioController extends Controller
      */
     public function store(StoreUsuarioRequest $request)
     {
-
-
-        $this->authorize('create', Usuario::class );
-        $usuario = new Usuario();
-        $usuario->nombre = $request->nombre;
-        $usuario->apellido = $request->apellido;
-        $usuario->nombre_usuario = $request->nombre_usuario;
-        $usuario->contraseña = Hash::make($request->passw);
-        $usuario->rol = $request->rol;
-        $usuario->fecha_nacimiento = $request->fecha_nacimiento;
-        $usuario->email = $request->email;
-        $usuario->telefono = $request->telefono;
-        if ($request->hasFile('avatar')) {
-            $imagen = $request->file('avatar');
-            $nombre = time().rand(1,100).'.'.$imagen->extension();
-            $imagen->storeAs('', $nombre,'avatares');
-            $usuario->avatar = $nombre;
+        if(Gate::allows('create', Usuario::class)){  
+            $usuario = new Usuario();
+            $usuario->nombre = $request->nombre;
+            $usuario->apellido = $request->apellido;
+            $usuario->nombre_usuario = $request->nombre_usuario;
+            $usuario->contraseña = Hash::make($request->passw);
+            $usuario->rol = $request->rol;
+            $usuario->fecha_nacimiento = $request->fecha_nacimiento;
+            $usuario->email = $request->email;
+            $usuario->telefono = $request->telefono;
+            if ($request->hasFile('avatar')) {
+                $imagen = $request->file('avatar');
+                $nombre = time().rand(1,100).'.'.$imagen->extension();
+                $imagen->storeAs('', $nombre,'avatares');
+                $usuario->avatar = $nombre;
+            }
+            $usuario->save();
+            return response()->json($usuario);    
+        }else{
+            return response()->json("Solo el gerente puede crear usuarios.",403);
         }
-        $usuario->save();
-        return response()->json($usuario);
+
     }
 
     /**
@@ -55,14 +61,18 @@ class UsuarioController extends Controller
      */
     public function show(Usuario $usuario)
     {
-        //$usuario->load('eventos');
-        return response()->json($usuario);
+        if(Gate::allows('view' , $usuario )){  
+            //$usuario->load('eventos');
+            return response()->json($usuario);
+        }else{
+            return response()->json("El usuario actual no puede ver a este usuario.",403);
+        }
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Usuario $usuario)
+    public function update(Request $request, Usuario $usuario) //falta validar....
     {
         
         $this->authorize('update', $usuario );
@@ -81,7 +91,7 @@ class UsuarioController extends Controller
         Log::channel('debug')->info("file:" . $resp . ':');
         if ($request->hasFile('avatar')) {
             Log::channel('debug')->info("Usuario envio avatar:" );
-
+            //falta eliminar si es que ya tiene antes uno.
             $imagen = $request->file('avatar');
             $nombre = time().rand(1,100).'.'.$imagen->extension();
             $imagen->storeAs('', $nombre,'avatares');
@@ -96,12 +106,15 @@ class UsuarioController extends Controller
      */
     public function destroy(Usuario $usuario)
     {
-        $this->authorize('delete', $usuario );
-        if($usuario->eventos()->count()>0){
-            return response()->json("Imposible eliminar", 409);
+        if(Gate::allows('delete', $usuario )){  
+            if($usuario->eventos()->count()>0){
+                return response()->json("Imposible eliminar", 409);
+            }else{
+                $usuario->delete();
+                return response()->json($usuario);
+            }
         }else{
-            $usuario->delete();
-            return response()->json($usuario);
+            return response()->json("Solo el gerente puede listar usuarios",403);
         }
     }
 

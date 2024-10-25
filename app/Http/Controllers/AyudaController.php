@@ -6,10 +6,11 @@ use App\Models\Usuario;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use App\Http\Requests\RegistrarUsuarioRequest;
 
 class AyudaController extends Controller
 {
-    public function registroUsuario(Request $request)
+    public function registroUsuario(RegistrarUsuarioRequest $request)
     {
         $usuario = new Usuario();
         $usuario->nombre = $request->nombre;
@@ -24,6 +25,7 @@ class AyudaController extends Controller
         $usuario->save();
         return response()->json([$usuario],200);
     }
+
     public function inicializar() {
         Artisan::call('db:wipe');
         Artisan::call('migrate', 

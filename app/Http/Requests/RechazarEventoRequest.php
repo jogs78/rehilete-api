@@ -3,8 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-
-class UpdateUsuarioRequest extends FormRequest
+class RechazarEventoRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -21,8 +20,15 @@ class UpdateUsuarioRequest extends FormRequest
      */
     public function rules(): array
     {
+            return [
+                'motivo' => 'required',
+            ];
+    }
+
+    public function messages()
+    {
         return [
-            //
+            '*.required' => 'El campo :attribute es requerido',
         ];
     }
 }
