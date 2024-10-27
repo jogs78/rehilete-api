@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AbonoController;
 use App\Http\Controllers\AyudaController;
+use App\Http\Controllers\EventoAbonoController;
 use App\Http\Controllers\EventoController;
 use App\Http\Controllers\EventoFotoController;
 use App\Http\Controllers\FotoController;
@@ -59,14 +60,16 @@ Route::apiResource('paquetes', PaqueteController::class, ['except' => ['index','
 Route::put('paquetes/activar/{paquete}',[PaqueteController::class,'activar'])->middleware('conToken')->name('paquetes.activar');
 Route::apiResource('paquetes.medios', PaqueteMedioController::class, ['only' => ['index']]);
 Route::apiResource('paquetes.medios', PaqueteMedioController::class, ['except' => ['index','update']])->middleware('conToken');
-Route::apiResource('paquetes.servicios', PaqueteServicioController::class, ['except' => ['show','update']]);
+Route::apiResource('paquetes.servicios', PaqueteServicioController::class, ['except' => ['show','update']])->middleware('conToken');
 
 Route::apiResource('eventos', EventoController::class)->middleware('conToken');//
+Route::get('eventos/{evento}/total',[EventoController::class,'total'])->middleware('conToken');
 Route::put('eventos/{evento}/confirmar',[EventoController::class, 'confirmar'])->middleware('conToken');//
 Route::put('eventos/{evento}/rechazar',[EventoController::class, 'rechazar'])->middleware('conToken');//
 
 //estos deben ser nested tanto gastos como abonos
-Route::apiResource('abonos', AbonoController::class)->middleware('conToken');
+//Route::apiResource('abonos', AbonoController::class)->middleware('conToken');
+Route::apiResource('eventos.abonos',EventoAbonoController::class, ['except' => ['show','update']])->middleware('conToken');
 
 Route::apiResource('gastos', GastoController::class)->middleware('conToken');
 

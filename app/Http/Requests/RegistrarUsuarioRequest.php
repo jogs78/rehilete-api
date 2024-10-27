@@ -21,16 +21,12 @@ class RegistrarUsuarioRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
-            'nombre'=>'required|string|max:255',
-            'apellido'=>'required|string|max:255',
-            'nombre_usuario'=>'required|string|max:255|unique:usuarios,nombre_usuario',  
-            'passw'=>'required|string|min:5|max:255',
-            'fecha_nacimiento' => 'required|date_format:Y/m/d',
-            'email'=>'required|email',
-            'telefono' => 'required|regex:/^\+?\d+(?: \d+)*$/',
-            'avatar' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
-        ];
+        return array_merge($reglas,[
+            'usuario_id' => ['required', 'exists:usuarios,id'],
+//                'hora_fin' => ['nullable', 'integer', 'between:0,23'],
+            'hora_fin' => ['nullable', 'date_format:H'],
+            'precio' => ['nullable', 'numeric'],
+        ]);
     }
     public function messages(): array
     {

@@ -75,4 +75,15 @@ class EventoPolicy
         Log::channel('debug')->info("Puede borrar un evento: $ret");
         return $ret;
     }
+    
+    public function total(Usuario $user, Evento $evento):bool
+    {
+        if ($user->rol == 'Gerente' || $user->rol == 'Empleado') {
+            return true;
+        } else {
+            // Puedes ahora usar $evento en la lógica de autorización
+            return $user->id == $evento->user_id; // ejemplo de validación
+        }
+
+    }
 }

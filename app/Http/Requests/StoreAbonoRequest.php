@@ -11,7 +11,7 @@ class StoreAbonoRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -21,8 +21,19 @@ class StoreAbonoRequest extends FormRequest
      */
     public function rules(): array
     {
+        //descripcion, cantidad
         return [
-            //
+            'descripcion' => ['required', 'string'],
+            'cantidad' => ['required', 'numeric'],
+        ];
+    }
+    public function messages(): array
+    {
+        return [
+            '*.required'=>'El campo :attribute es requerido',
+            '*.string'=>'El campo :attribute debe ser un texto',
+            '*.numeric'=>'El campo :attribute debe ser numerico',
         ];
     }
 }
+

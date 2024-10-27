@@ -241,5 +241,18 @@ class EventoController extends Controller
             return response()->json("Solo el gerente puede rechazar eventos",403);
         }
     }
+    public function total(Evento $evento){
+        if (Gate::allows('total',$evento)) {
+            if( $evento->confirmacion == 'confirmado'){
+
+                return response()->json(["monto"=>$evento->precio, "abonado" => $evento->totalAbonos()]);
+            }else{
+                return response()->json("El evento no esta confirmado",422);
+            }
+        }else{
+            return response()->json("El usuario actual no puede ver los abonos de este evento",403);
+
+        }
+    }
 
 }

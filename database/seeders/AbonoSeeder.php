@@ -68,5 +68,12 @@ class AbonoSeeder extends Seeder
         $abono->cantidad = 15000;
         $abono->save();
 
+        $abono = new Abono();
+        $abono->evento_id = 9;
+        $abono->quien_recibio = 4;
+        $abono->descripcion = "Pago del evento";
+        $abono->cantidad = 7500; //solo falta 500
+        $abono->save();
+
     }
 }

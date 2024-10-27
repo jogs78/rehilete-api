@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Abono;
+use App\Http\Requests\StoreAbonoRequest;
 use App\Models\Evento;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -31,11 +32,15 @@ class EventoAbonoController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request, Evento $evento)
+    public function store(StoreAbonoRequest $request, Evento $evento)
     {
         if (Gate::allows('create', Abono::class)) {
             if( $evento->confirmacion == 'confirmado'){
-
+                $total= $evento->totalAbonos();
+                //determinar si el ya  esta pagado o si hay que dar cambio
+                if($evento->precio == $total ){
+                    return response()->json("El importe del evento ya ha sido cubierto con anterioridad",422);
+                }
                 $usuario=Auth::getUser();
                 $abono = new Abono();
                 $abono->evento_id = $evento->id;
@@ -43,6 +48,13 @@ class EventoAbonoController extends Controller
                 $abono->descripcion = $request->descripcion;
                 $abono->cantidad = $request->cantidad;
                 $abono->save();
+                if(($total + $request->cantidad) > $evento->precio)
+                    $abono->cambio = ($total + $request->cantidad) - $evento->precio;
+                else
+                    $abono->falta =  $evento->precio - ($total + $request->cantidad) ;
+                $abono->precio_evento = $evento->precio;
+                $abono->abonado = $evento->totalAbonos();
+//                $evento->load('abonos');
                 return response()->json($abono);
         
             }else{
@@ -67,9 +79,6 @@ class EventoAbonoController extends Controller
         }else{
             return response()->json("El usuario actual no puede eliminar el abono de este evento",403);
         }
-    }
-    public function sumar(Evento $evento){
-
     }
 
 }
