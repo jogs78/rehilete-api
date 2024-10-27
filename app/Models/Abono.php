@@ -8,4 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Abono extends Model
 {
     use HasFactory;
+    public function quienRecibio(){
+        return $this->belognsTo(Usuario::class,"id","quien_recibio");
+    }
 }

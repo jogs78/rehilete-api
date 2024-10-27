@@ -14,12 +14,12 @@ return new class extends Migration
         Schema::create('abonos', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('evento_id');
-            $table->unsignedBigInteger('usuario_id');
+            $table->unsignedBigInteger('quien_recibio');
             $table->string('descripcion');
             $table->double('cantidad');
             $table->timestamps();
 
-            $table->foreign('usuario_id')->references('id')->on('usuarios');
+            $table->foreign('quien_recibio')->references('id')->on('usuarios');
             $table->foreign('evento_id')->references('id')->on('eventos');
         });
     }

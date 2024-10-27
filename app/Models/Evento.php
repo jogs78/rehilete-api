@@ -32,7 +32,13 @@ class Evento extends Model
     public function fotos(){
         return $this->hasMany(Foto::class);
     }
-
+    public function abonos(){
+        return $this->hasMany(Abono::class);
+    }
+    public function totalAbonos(): float
+    {
+        return $this->abonos()->sum('cantidad');
+    }
     public function dueño(){
         return $this->hasOne(Usuario::class, "id","usuario_id");
     }

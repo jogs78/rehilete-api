@@ -23,6 +23,7 @@ class DatabaseSeeder extends Seeder
             ServicioSeeder::class,
             PaqueteSeeder::class,
             EventoSeeder::class,
+            AbonoSeeder::class,
         ]);
     }
 }

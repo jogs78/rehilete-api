@@ -3,7 +3,8 @@
 namespace App\Policies;
 
 use App\Models\Abono;
-use App\Models\User;
+use App\Models\Evento;
+use App\Models\Usuario as User;
 use Illuminate\Auth\Access\Response;
 
 class AbonoPolicy
@@ -11,17 +12,14 @@ class AbonoPolicy
     /**
      * Determine whether the user can view any models.
      */
-    public function viewAny(User $user): bool
+    public function viewAny(User $user, Evento $evento): bool
     {
-        //
-    }
-
-    /**
-     * Determine whether the user can view the model.
-     */
-    public function view(User $user, Abono $abono): bool
-    {
-        //
+        if ($user->rol == 'Gerente' || $user->rol == 'Empleado') {
+            return true;
+        } else {
+            // Puedes ahora usar $evento en la lógica de autorización
+            return $user->id === $evento->user_id; // ejemplo de validación
+        }
     }
 
     /**
@@ -29,15 +27,9 @@ class AbonoPolicy
      */
     public function create(User $user): bool
     {
-        //
-    }
-
-    /**
-     * Determine whether the user can update the model.
-     */
-    public function update(User $user, Abono $abono): bool
-    {
-        //
+        if ($user->rol == 'Gerente' || $user->rol == 'Empleado') {
+            return true;
+        } else return false;
     }
 
     /**
@@ -45,22 +37,9 @@ class AbonoPolicy
      */
     public function delete(User $user, Abono $abono): bool
     {
-        //
+        if ($user->rol == 'Gerente' ) {
+            return true;
+        } else return false;
     }
 
-    /**
-     * Determine whether the user can restore the model.
-     */
-    public function restore(User $user, Abono $abono): bool
-    {
-        //
-    }
-
-    /**
-     * Determine whether the user can permanently delete the model.
-     */
-    public function forceDelete(User $user, Abono $abono): bool
-    {
-        //
-    }
 }
