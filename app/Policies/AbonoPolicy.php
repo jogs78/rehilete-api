@@ -4,30 +4,32 @@ namespace App\Policies;
 
 use App\Models\Abono;
 use App\Models\Evento;
-use App\Models\Usuario as User;
-use Illuminate\Auth\Access\Response;
+use App\Models\Usuario;
+use Illuminate\Support\Facades\Log;
 
 class AbonoPolicy
 {
     /**
      * Determine whether the user can view any models.
      */
-    public function viewAny(User $user, Evento $evento): bool
+    public function viewAny(Usuario $usuario, Evento $evento): bool
     {
-        if ($user->rol == 'Gerente' || $user->rol == 'Empleado') {
+        Log::channel('debug')->info("Dentro de la politica viewAny \n\tuser:" . $usuario->toJson() . ", \n\tevento:" . $evento->toJson());
+
+        if ($usuario->rol == 'Gerente' || $usuario->rol == 'Empleado') {
             return true;
         } else {
             // Puedes ahora usar $evento en la lógica de autorización
-            return $user->id === $evento->user_id; // ejemplo de validación
+            return $usuario->id == $evento->user_id; // ejemplo de validación
         }
     }
 
     /**
      * Determine whether the user can create models.
      */
-    public function create(User $user): bool
+    public function create(Usuario $usuario): bool
     {
-        if ($user->rol == 'Gerente' || $user->rol == 'Empleado') {
+        if ($usuario->rol == 'Gerente' || $usuario->rol == 'Empleado') {
             return true;
         } else return false;
     }
@@ -35,9 +37,9 @@ class AbonoPolicy
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, Abono $abono): bool
+    public function delete(Usuario $usuario, Abono $abono): bool
     {
-        if ($user->rol == 'Gerente' ) {
+        if ($usuario->rol == 'Gerente' ) {
             return true;
         } else return false;
     }

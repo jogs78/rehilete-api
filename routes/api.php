@@ -1,12 +1,12 @@
 <?php
 
-use App\Http\Controllers\AbonoController;
 use App\Http\Controllers\AyudaController;
-use App\Http\Controllers\EventoAbonoController;
 use App\Http\Controllers\EventoController;
 use App\Http\Controllers\EventoFotoController;
+use App\Http\Controllers\EventoAbonoController;
+use App\Http\Controllers\EventoGastoController;
+
 use App\Http\Controllers\FotoController;
-use App\Http\Controllers\GastoController;
 use App\Http\Controllers\PublicaController;
 use App\Http\Controllers\PuertaController;
 use App\Http\Controllers\ServicioController;
@@ -63,25 +63,18 @@ Route::apiResource('paquetes.medios', PaqueteMedioController::class, ['except' =
 Route::apiResource('paquetes.servicios', PaqueteServicioController::class, ['except' => ['show','update']])->middleware('conToken');
 
 Route::apiResource('eventos', EventoController::class)->middleware('conToken');//
-Route::get('eventos/{evento}/total',[EventoController::class,'total'])->middleware('conToken');
+Route::get('eventos/{evento}/totalAbonos',[EventoController::class,'totalAbonos'])->middleware('conToken');
+Route::get('eventos/{evento}/totalGatos',[EventoController::class,'totalGatos'])->middleware('conToken');
 Route::put('eventos/{evento}/confirmar',[EventoController::class, 'confirmar'])->middleware('conToken');//
 Route::put('eventos/{evento}/rechazar',[EventoController::class, 'rechazar'])->middleware('conToken');//
 
-//estos deben ser nested tanto gastos como abonos
-//Route::apiResource('abonos', AbonoController::class)->middleware('conToken');
 Route::apiResource('eventos.abonos',EventoAbonoController::class, ['except' => ['show','update']])->middleware('conToken');
+Route::apiResource('eventos.gastos',EventoGastoController::class, ['except' => ['show','update']])->middleware('conToken');
 
-Route::apiResource('gastos', GastoController::class)->middleware('conToken');
 
 Route::apiResource('fotos', FotoController::class, ['only' => ['show']])->middleware('conToken');
 Route::apiResource('evento.fotos', EventoFotoController::class,['except' => ['show', 'update']])->middleware('conToken');
 
-
-
-
-//Route::get('publicas', [PublicaController::class,'index2'])->middleware('conToken');
 Route::apiResource('publicas', PublicaController::class)->middleware('conToken');
 Route::apiResource('usable.publicas', UsablePublicaController::class)->middleware('conToken');
 
-//Route::get('ver/privada/{privada}',[PrivadaController::class,'show2'])->middleware('conToken');
-//Route::get('ver/publica/{publica}',[PublicaController::class,'show2'])->middleware('conToken');

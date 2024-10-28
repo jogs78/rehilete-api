@@ -4,12 +4,14 @@ namespace App\Providers;
 
 // use Illuminate\Support\Facades\Gate;
 use App\Models\Abono;
+use App\Models\Gasto;
 use App\Models\Evento;
 use App\Models\Servicio;
 use App\Models\Paquete;
 use App\Models\Medio;
 use App\Models\Usuario;
 use App\Policies\AbonoPolicy;
+use App\Policies\GastoPolicy;
 use App\Policies\EventoPolicy;
 use App\Policies\ServicioPolicy;
 use App\Policies\PaquetePolicy;
@@ -33,6 +35,7 @@ class AuthServiceProvider extends ServiceProvider
         Medio::class => MedioPolicy::class,
         Usuario::class => UsuarioPolicy::class,
         Abono::class => AbonoPolicy::class,
+        Gasto::class => GastoPolicy::class,        
         //falta como son las politicas de abonos y de usuarios, gastos
     ];
 

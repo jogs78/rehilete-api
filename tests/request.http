@@ -1,0 +1,33 @@
+### Configurar entorno
+@url = http://127.0.0.1:8000
+@usuario = carlos
+@passw = 1234
+@token = 7qELU5h8vcVo5XxR
+### autenticar
+POST {{url}}/api/entrada
+Content-Type: application/json
+
+{
+    "nombre_usuario":"{{usuario}}",
+    "passw":"{{passw}}"
+} 
+
+### -------
+// Extraer el token de la respuesta y almacenarlo en una variable
+let response = await fetch('{{url}}/api/entrada',{
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    nombre_usuario: "{{usuario}}",
+    passw: "{{passw}}"
+  })
+});
+
+let data = await response.json();
+@token = data.token;
+
+### pedir abonos del evento 7 con el token
+GET {{url}}/api/eventos/7/abonos
+Authorization: Bearer {{token}}

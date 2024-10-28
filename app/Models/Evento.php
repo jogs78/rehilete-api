@@ -32,6 +32,14 @@ class Evento extends Model
     public function fotos(){
         return $this->hasMany(Foto::class);
     }
+
+    public function gastos(){
+        return $this->hasMany(Gasto::class);
+    }
+    public function totalgastos(){
+        return $this->gastos()->sum('cantidad');
+    }
+
     public function abonos(){
         return $this->hasMany(Abono::class);
     }
