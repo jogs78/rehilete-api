@@ -43,7 +43,7 @@ return [
             'visibility' => 'public',
             'throw' => false,
         ],
-        
+
         'privadas' => [
             'driver' => 'local',
             'root' => storage_path('app/privadas'),
@@ -57,7 +57,6 @@ return [
             'throw' => false,
             'visibility' => 'private',
         ],
-
 
         'publicas' => [
             'driver' => 'local',

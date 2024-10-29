@@ -3,7 +3,6 @@
 namespace App\Policies;
 
 use App\Models\Usuario;
-use Illuminate\Auth\Access\Response;
 use Illuminate\Support\Facades\Log;
 
 class UsuarioPolicy
@@ -13,7 +12,7 @@ class UsuarioPolicy
      */
     public function viewAny(Usuario $actual): bool
     {
-        Log::channel('debug')->info("Usuario viewAny:" . $actual->toJson());
+        Log::channel('debug')->info('Usuario viewAny:'.$actual->toJson());
 
         return $actual->rol == 'Gerente';
     }
@@ -23,7 +22,7 @@ class UsuarioPolicy
      */
     public function view(Usuario $actual, Usuario $recurso): bool
     {
-        return $actual->rol == 'Gerente' || $recurso->id == $actual->id ;
+        return $actual->rol == 'Gerente' || $recurso->id == $actual->id;
     }
 
     /**
@@ -31,7 +30,7 @@ class UsuarioPolicy
      */
     public function create(Usuario $actual): bool
     {
-        return $actual->rol == 'Gerente' ;
+        return $actual->rol == 'Gerente';
     }
 
     /**
@@ -39,7 +38,7 @@ class UsuarioPolicy
      */
     public function update(Usuario $actual, Usuario $recurso): bool
     {
-        return $actual->rol == 'Gerente' || $recurso->id == $actual->id ;
+        return $actual->rol == 'Gerente' || $recurso->id == $actual->id;
     }
 
     /**
@@ -47,20 +46,21 @@ class UsuarioPolicy
      */
     public function delete(Usuario $actual, Usuario $recurso): bool
     {
-        return $actual->rol == 'Gerente' || $recurso->id == $actual->id ;
+        return $actual->rol == 'Gerente' || $recurso->id == $actual->id;
     }
 
     public function verAvatar(Usuario $actual, Usuario $recurso): bool
     {
-        return $actual->rol == 'Gerente' || $recurso->id == $actual->id ;
-    }
-    public function subirAvatar(Usuario $actual, Usuario $recurso): bool
-    {
-        return $recurso->id == $actual->id ;
-    }
-    public function borrarAvatar(Usuario $actual, Usuario $recurso): bool
-    {
-        return $recurso->id == $actual->id ;
+        return $actual->rol == 'Gerente' || $recurso->id == $actual->id;
     }
 
+    public function subirAvatar(Usuario $actual, Usuario $recurso): bool
+    {
+        return $recurso->id == $actual->id;
+    }
+
+    public function borrarAvatar(Usuario $actual, Usuario $recurso): bool
+    {
+        return $recurso->id == $actual->id;
+    }
 }

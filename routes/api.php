@@ -1,19 +1,18 @@
 <?php
 
 use App\Http\Controllers\AyudaController;
+use App\Http\Controllers\EventoAbonoController;
 use App\Http\Controllers\EventoController;
 use App\Http\Controllers\EventoFotoController;
-use App\Http\Controllers\EventoAbonoController;
 use App\Http\Controllers\EventoGastoController;
-
 use App\Http\Controllers\FotoController;
+use App\Http\Controllers\PaqueteController;
+use App\Http\Controllers\PaqueteMedioController;
+use App\Http\Controllers\PaqueteServicioController;
 use App\Http\Controllers\PublicaController;
 use App\Http\Controllers\PuertaController;
 use App\Http\Controllers\ServicioController;
 use App\Http\Controllers\ServicioMedioController;
-use App\Http\Controllers\PaqueteController;
-use App\Http\Controllers\PaqueteMedioController;
-use App\Http\Controllers\PaqueteServicioController;
 use App\Http\Controllers\UsablePublicaController;
 use App\Http\Controllers\UsuarioController;
 use Illuminate\Http\Request;
@@ -34,47 +33,40 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-
 Route::post('entrada', [PuertaController::class, 'entrada']);
-Route::post('salida', [PuertaController::class,'salida'])->middleware('conToken')->name('usuarios.avatar');
+Route::post('salida', [PuertaController::class, 'salida'])->middleware('conToken')->name('usuarios.avatar');
 
-
-Route::apiResource('servicios', ServicioController::class, ['only'   => ['index','show']]);
-Route::apiResource('servicios', ServicioController::class, ['except' => ['index','show']])->middleware('conToken');
+Route::apiResource('servicios', ServicioController::class, ['only' => ['index', 'show']]);
+Route::apiResource('servicios', ServicioController::class, ['except' => ['index', 'show']])->middleware('conToken');
 Route::apiResource('servicios.medios', ServicioMedioController::class, ['only' => ['index']]);
-Route::apiResource('servicios.medios', ServicioMedioController::class, ['except' => ['index','update']])->middleware('conToken');
+Route::apiResource('servicios.medios', ServicioMedioController::class, ['except' => ['index', 'update']])->middleware('conToken');
 
+Route::apiResource('usuarios', UsuarioController::class)->middleware('conToken');
+Route::post('usuarios/registrar', [AyudaController::class, 'registroUsuario']);
+Route::get('usuarios/{usuario}/avatar', [UsuarioController::class, 'verAvatar'])->middleware('conToken');
+Route::post('usuarios/{usuario}/avatar', [UsuarioController::class, 'subirAvatar'])->middleware('conToken');
+Route::delete('usuarios/{usuario}/avatar', [UsuarioController::class, 'borrarAvatar'])->middleware('conToken');
 
+route::get('incializar', [AyudaController::class, 'inicializar'])->middleware('conToken');
 
-Route::apiResource('usuarios', UsuarioController::class)->middleware('conToken'); 
-Route::post('usuarios/registrar', [AyudaController::class,'registroUsuario']);
-Route::get('usuarios/{usuario}/avatar', [UsuarioController::class,'verAvatar'])->middleware('conToken');
-Route::post('usuarios/{usuario}/avatar', [UsuarioController::class,'subirAvatar'])->middleware('conToken');
-Route::delete('usuarios/{usuario}/avatar', [UsuarioController::class,'borrarAvatar'])->middleware('conToken');
-
-route::get('incializar', [AyudaController::class,'inicializar'])->middleware('conToken');
-
-
-Route::apiResource('paquetes', PaqueteController::class, ['only'   => ['index','show']]);
-Route::apiResource('paquetes', PaqueteController::class, ['except' => ['index','show']])->middleware('conToken');
-Route::put('paquetes/activar/{paquete}',[PaqueteController::class,'activar'])->middleware('conToken')->name('paquetes.activar');
+Route::apiResource('paquetes', PaqueteController::class, ['only' => ['index', 'show']]);
+Route::apiResource('paquetes', PaqueteController::class, ['except' => ['index', 'show']])->middleware('conToken');
+Route::put('paquetes/activar/{paquete}', [PaqueteController::class, 'activar'])->middleware('conToken')->name('paquetes.activar');
 Route::apiResource('paquetes.medios', PaqueteMedioController::class, ['only' => ['index']]);
-Route::apiResource('paquetes.medios', PaqueteMedioController::class, ['except' => ['index','update']])->middleware('conToken');
-Route::apiResource('paquetes.servicios', PaqueteServicioController::class, ['except' => ['show','update']])->middleware('conToken');
+Route::apiResource('paquetes.medios', PaqueteMedioController::class, ['except' => ['index', 'update']])->middleware('conToken');
+Route::apiResource('paquetes.servicios', PaqueteServicioController::class, ['except' => ['show', 'update']])->middleware('conToken');
 
-Route::apiResource('eventos', EventoController::class)->middleware('conToken');//
-Route::get('eventos/{evento}/totalAbonos',[EventoController::class,'totalAbonos'])->middleware('conToken');
-Route::get('eventos/{evento}/totalGastos',[EventoController::class,'totalGastos'])->middleware('conToken');
-Route::put('eventos/{evento}/confirmar',[EventoController::class, 'confirmar'])->middleware('conToken');//
-Route::put('eventos/{evento}/rechazar',[EventoController::class, 'rechazar'])->middleware('conToken');//
+Route::apiResource('eventos', EventoController::class)->middleware('conToken'); //
+Route::get('eventos/{evento}/totalAbonos', [EventoController::class, 'totalAbonos'])->middleware('conToken');
+Route::get('eventos/{evento}/totalGastos', [EventoController::class, 'totalGastos'])->middleware('conToken');
+Route::put('eventos/{evento}/confirmar', [EventoController::class, 'confirmar'])->middleware('conToken'); //
+Route::put('eventos/{evento}/rechazar', [EventoController::class, 'rechazar'])->middleware('conToken'); //
 
-Route::apiResource('eventos.abonos',EventoAbonoController::class, ['except' => ['show','update']])->middleware('conToken');
-Route::apiResource('eventos.gastos',EventoGastoController::class, ['except' => ['show']])->middleware('conToken');
-
+Route::apiResource('eventos.abonos', EventoAbonoController::class, ['except' => ['show', 'update']])->middleware('conToken');
+Route::apiResource('eventos.gastos', EventoGastoController::class, ['except' => ['show']])->middleware('conToken');
 
 Route::apiResource('fotos', FotoController::class, ['only' => ['show']])->middleware('conToken');
-Route::apiResource('evento.fotos', EventoFotoController::class,['except' => ['show', 'update']])->middleware('conToken');
+Route::apiResource('evento.fotos', EventoFotoController::class, ['except' => ['show', 'update']])->middleware('conToken');
 
 Route::apiResource('publicas', PublicaController::class)->middleware('conToken');
 Route::apiResource('usable.publicas', UsablePublicaController::class)->middleware('conToken');
-

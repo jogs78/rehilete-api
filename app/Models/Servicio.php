@@ -9,12 +9,16 @@ use Illuminate\Database\Eloquent\Relations\MorphToMany;
 class Servicio extends Model
 {
     use HasFactory;
-    protected $primaryKey = 'id';
-    protected $fillable = ['id', 'nombre', 'precio', 'descripcion', 'minimo', ];
 
-    public function paquetes() {
+    protected $primaryKey = 'id';
+
+    protected $fillable = ['id', 'nombre', 'precio', 'descripcion', 'minimo'];
+
+    public function paquetes()
+    {
         return $this->belongsToMany(Paquete::class);
     }
+
     public function eventos()
     {
         return $this->belongsToMany(Evento::class);
@@ -22,7 +26,7 @@ class Servicio extends Model
 
     public function imagenes(): MorphToMany
     {
-        return $this->morphToMany(Medio::class, 'usa','usables',);
+        return $this->morphToMany(Medio::class, 'usa', 'usables');
     }
 
     /*

@@ -17,9 +17,9 @@ return new class extends Migration
             $table->string('apellido');
             $table->string('nombre_usuario')->unique();
             $table->string('contraseña');
-            $table->enum('rol', ['Gerente', 'Cliente','Empleado'])->default('Cliente');
+            $table->enum('rol', ['Gerente', 'Cliente', 'Empleado'])->default('Cliente');
             $table->string('token')->nullable();
-            $table->bigInteger('expiracion',false,true)->nullable()->default(null);
+            $table->bigInteger('expiracion', false, true)->nullable()->default(null);
             //$table->string('direccion')->nullable();
             $table->date('fecha_nacimiento');
             $table->string('email');

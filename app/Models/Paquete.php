@@ -9,33 +9,39 @@ use Illuminate\Database\Eloquent\Relations\MorphToMany;
 class Paquete extends Model
 {
     use HasFactory;
-    protected $fillable = ['nombre', 'activo', 'precio', 'descripcion', ];
 
-    public function servicios() {
+    protected $fillable = ['nombre', 'activo', 'precio', 'descripcion'];
+
+    public function servicios()
+    {
         return $this->belongsToMany(Servicio::class);
     }
 
-    public function eventos() {
+    public function eventos()
+    {
         return $this->hasMany(Evento::class);
     }
 
-    public function eventosConfirmados() {
+    public function eventosConfirmados()
+    {
         return $this->hasMany(Evento::class)->where('confirmacion', 'confirmado');
     }
 
-    public function eventosConfirmadosPendientes() {
+    public function eventosConfirmadosPendientes()
+    {
         return $this->hasMany(Evento::class)
-                    ->where('confirmacion', 'confirmado')
-                    ->where('realizado', false);
+            ->where('confirmacion', 'confirmado')
+            ->where('realizado', false);
     }
-    
-    public function eventosNoConfirmados() {
+
+    public function eventosNoConfirmados()
+    {
         return $this->hasMany(Evento::class)->where('confirmacion', 'sin confirmar');
     }
 
     public function imagenes(): MorphToMany
     {
-        return $this->morphToMany(Medio::class, 'usa','usables');
+        return $this->morphToMany(Medio::class, 'usa', 'usables');
         $this->morphOne();
     }
 }

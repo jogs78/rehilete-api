@@ -2,13 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreGastoRequest;
 use App\Models\Evento;
 use App\Models\Gasto;
-use Illuminate\Http\Request;
-use App\Http\Requests\StoreGastoRequest;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Log;
 
 class EventoGastoController extends Controller
 {
@@ -18,47 +17,50 @@ class EventoGastoController extends Controller
     public function index(Evento $evento)
     {
         $user = Auth::getUser();
-        Log::channel('debug')->info("Dentro del controller viewAny\n\tuser:" . $user->toJson() . ", \n\tevento:" . $evento->toJson());
+        Log::channel('debug')->info("Dentro del controller viewAny\n\tuser:".$user->toJson().", \n\tevento:".$evento->toJson());
 
         if (Gate::allows('viewAny', [Gasto::class, $evento])) {
-            if( $evento->confirmacion == 'confirmado'){
+            if ($evento->confirmacion == 'confirmado') {
                 $gastos = $evento->gastos;
-                if( sizeof($gastos)==0 ) return response()->json("sin gastos registrados"); 
-                else return response()->json($gastos);
-            }else{
-                return response()->json("El evento no esta confirmado",422);
+                if (count($gastos) == 0) {
+                    return response()->json('sin gastos registrados');
+                } else {
+                    return response()->json($gastos);
+                }
+            } else {
+                return response()->json('El evento no esta confirmado', 422);
             }
-        }else{
-            return response()->json("El usuario actual no puede ver los gastos de este evento",403);
+        } else {
+            return response()->json('El usuario actual no puede ver los gastos de este evento', 403);
 
         }
 
     }
-
 
     /**
      * Store a newly created resource in storage.
      */
     public function store(StoreGastoRequest $request, Evento $evento)
     {
-//        $user = Auth::getUser();
-//        Log::channel('debug')->info("Dentro del controller viewAny\n\tuser:" . $user->toJson() . ", \n\tevento:" . $evento->toJson());
+        //        $user = Auth::getUser();
+        //        Log::channel('debug')->info("Dentro del controller viewAny\n\tuser:" . $user->toJson() . ", \n\tevento:" . $evento->toJson());
 
         if (Gate::allows('create', [Gasto::class, $evento])) {
-            if( $evento->confirmacion == 'confirmado'){
-                $gasto = new gasto();
+            if ($evento->confirmacion == 'confirmado') {
+                $gasto = new gasto;
                 $gasto->evento_id = $evento->id;
                 $gasto->descripcion = $request->descripcion;
-                $gasto->cantidad =  $request->cantidad;
+                $gasto->cantidad = $request->cantidad;
                 $gasto->save();
-                Log::channel('debug')->info("Guardo la cantidad:" . $gasto->cantidad);
+                Log::channel('debug')->info('Guardo la cantidad:'.$gasto->cantidad);
+
                 return response()->json($gasto);
-        
-            }else{
-                return response()->json("El evento no esta confirmado",422);
+
+            } else {
+                return response()->json('El evento no esta confirmado', 422);
             }
-        }else{
-            return response()->json("El usuario actual no puede acentar gastos de este evento",403);
+        } else {
+            return response()->json('El usuario actual no puede acentar gastos de este evento', 403);
         }
     }
 
@@ -67,22 +69,23 @@ class EventoGastoController extends Controller
      */
     public function update(StoreGastoRequest $request, Evento $evento, Gasto $gasto)
     {
-//        $user = Auth::getUser();
-//        Log::channel('debug')->info("Dentro del controller viewAny\n\tuser:" . $user->toJson() . ", \n\tevento:" . $evento->toJson());
+        //        $user = Auth::getUser();
+        //        Log::channel('debug')->info("Dentro del controller viewAny\n\tuser:" . $user->toJson() . ", \n\tevento:" . $evento->toJson());
 
         if (Gate::allows('delete', [$gasto, $evento])) {
-            if( $evento->confirmacion == 'confirmado'){
+            if ($evento->confirmacion == 'confirmado') {
                 $gasto->descripcion = $request->descripcion;
-                $gasto->cantidad =  $request->cantidad;
+                $gasto->cantidad = $request->cantidad;
                 $gasto->save();
-                Log::channel('debug')->info("Guardo la cantidad:" . $gasto->cantidad);
+                Log::channel('debug')->info('Guardo la cantidad:'.$gasto->cantidad);
+
                 return response()->json($gasto);
-        
-            }else{
-                return response()->json("El evento no esta confirmado",422);
+
+            } else {
+                return response()->json('El evento no esta confirmado', 422);
             }
-        }else{
-            return response()->json("El usuario actual no puede acentar gastos de este evento",403);
+        } else {
+            return response()->json('El usuario actual no puede acentar gastos de este evento', 403);
         }
     }
 
@@ -92,14 +95,15 @@ class EventoGastoController extends Controller
     public function destroy(Evento $evento, Gasto $gasto)
     {
         if (Gate::allows('delete', [$gasto, $evento])) {
-            if( $evento->confirmacion == 'confirmado'){
+            if ($evento->confirmacion == 'confirmado') {
                 $gasto->delete();
-                return response()->json($gasto);            
-            }else{
-                return response()->json("El evento no esta confirmado",422);
+
+                return response()->json($gasto);
+            } else {
+                return response()->json('El evento no esta confirmado', 422);
             }
-        }else{
-            return response()->json("El usuario actual no puede eliminar el gasto de este evento",403);
+        } else {
+            return response()->json('El usuario actual no puede eliminar el gasto de este evento', 403);
         }
     }
 }

@@ -4,7 +4,6 @@ namespace App\Policies;
 
 use App\Models\Medio;
 use App\Models\Usuario;
-use Illuminate\Auth\Access\Response;
 
 class MedioPolicy
 {
@@ -29,7 +28,7 @@ class MedioPolicy
      */
     public function create(Usuario $usuario): bool
     {
-        return $usuario->rol == 'Gerente' ;
+        return $usuario->rol == 'Gerente';
     }
 
     /**

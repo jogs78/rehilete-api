@@ -2,37 +2,38 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ConfirmarEventoRequest;
+use App\Http\Requests\RechazarEventoRequest;
+use App\Http\Requests\StoreEventoRequest;
+use App\Http\Requests\UpdateEventoRequest;
 use App\Models\Evento;
+//use Illuminate\Support\Facades\DB;
 use App\Models\Paquete;
 use App\Models\Servicio;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-//use Illuminate\Support\Facades\DB;
-use App\Http\Requests\StoreEventoRequest;
-use App\Http\Requests\RechazarEventoRequest;
-use App\Http\Requests\ConfirmarEventoRequest;
-use App\Http\Requests\UpdateEventoRequest;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Log;
 
 class EventoController extends Controller
 {
     public function __construct()
     {
         // Llama al método de actualización de estados al construir la instancia del controlador
-       // $this->actualizarEstadoEventos();
+        // $this->actualizarEstadoEventos();
     }
+
     public function actualizarEstadoEventos()
     {
         // Obtén los eventos confirmados que cumplen con la condición
         $eventosPendientes = Evento::where('confirmacion', 'confirmado')
             ->where(function ($query) {
                 $query->where('fecha', '<', now()->toDateString())
-                      ->orWhere(function ($query) {
-                          $query->where('fecha', '=', now()->toDateString())
-                                ->where('hora_fin', '<', now()->toTimeString());
-                      });
+                    ->orWhere(function ($query) {
+                        $query->where('fecha', '=', now()->toDateString())
+                            ->where('hora_fin', '<', now()->toTimeString());
+                    });
             })->get();
 
         // Actualiza el estado de los eventos
@@ -43,6 +44,7 @@ class EventoController extends Controller
         // Puedes devolver una respuesta o redireccionar según tus necesidades
         return response()->json(['message' => 'Estado de eventos actualizado correctamente']);
     }
+
     /**
      * Display a listing of the resource.
      */
@@ -60,9 +62,10 @@ class EventoController extends Controller
                 $eventos = Evento::with('servicios', 'fotos')->where('confirmacion', 'confirmado')->get();
                 break;
             default:
-                # code...
+                // code...
                 break;
         }
+
         return response()->json($eventos);
     }
 
@@ -71,8 +74,8 @@ class EventoController extends Controller
      */
     public function store(StoreEventoRequest $request)
     {
-        if(Gate::allows('create' , Evento::class )){  
-            Log::channel('debug')->info("Confirmando");
+        if (Gate::allows('create', Evento::class)) {
+            Log::channel('debug')->info('Confirmando');
             $usuario = Auth::getUser();
             $gerente = $usuario->rol == 'Gerente';
             $puso_fin = isset($request->hora_fin);
@@ -80,108 +83,127 @@ class EventoController extends Controller
             ob_start();
             var_dump($puso_fin);
             $salida = ob_get_clean();
-            Log::channel('debug')->info('hora_inicio:' . $request->hora_inicio );
+            Log::channel('debug')->info('hora_inicio:'.$request->hora_inicio);
 
             $hora_inicial = Carbon::parse($request->hora_inicio);
             $hora_final = $hora_inicial;
-            $gerente && $puso_fin ? $hora_final =  Carbon::parse($request->hora_fin) : $hora_final = Carbon::parse($request->hora_inicio)->addHours(6);
-            
+            $gerente && $puso_fin ? $hora_final = Carbon::parse($request->hora_fin) : $hora_final = Carbon::parse($request->hora_inicio)->addHours(6);
+
             $acumulado = Paquete::find($request->paquete_id)->precio;
 
-            Log::channel('debug')->info('HORAS:' . $hora_inicial->format('H:i:s') );
-            Log::channel('debug')->info('HORAS:' . $hora_final->format('H:i:s') );
+            Log::channel('debug')->info('HORAS:'.$hora_inicial->format('H:i:s'));
+            Log::channel('debug')->info('HORAS:'.$hora_final->format('H:i:s'));
 
-            $evento = new Evento();
+            $evento = new Evento;
             $evento->nombre = $request->nombre;
             $evento->usuario_id = $gerente ? $request->usuario_id : $usuario->id;
             $evento->paquete_id = $request->paquete_id;
             $evento->paquete_precio = $acumulado;
-//            $evento->precio = $acumulado;
-            $evento->fecha = date($request-> fecha);
+            //            $evento->precio = $acumulado;
+            $evento->fecha = date($request->fecha);
             $evento->hora_inicio = $hora_inicial->format('H:i:s');
             $evento->hora_fin = $hora_final->format('H:i:s');
             $evento->descripcion = $request->descripcion;
-            if($gerente) $evento->gerente_id = $usuario->id ;
+            if ($gerente) {
+                $evento->gerente_id = $usuario->id;
+            }
             $evento->num_personas = $request->num_personas; //en teoria deberia dar error si es mas de 100
-  
-            if(isset($request->servicios)){
-                $servicios = $request -> servicios;
+
+            if (isset($request->servicios)) {
+                $servicios = $request->servicios;
                 ob_start();
                 var_dump($servicios);
                 $salida = ob_get_clean();
-                Log::channel('debug')->info('salida:' . $salida);
+                Log::channel('debug')->info('salida:'.$salida);
                 foreach ($servicios as $servicio) {
                     $servicio = Servicio::find($servicio);
                     $acumulado += $servicio->precio;
-                    $evento -> servicios() -> attach($servicio,['servicio_precio'=> $servicio->precio]);
+                    $evento->servicios()->attach($servicio, ['servicio_precio' => $servicio->precio]);
                 }
             }
 
-            $gerente && $puso_precio ? $evento->precio =  $request->precio : $evento->precio = $acumulado;
+            $gerente && $puso_precio ? $evento->precio = $request->precio : $evento->precio = $acumulado;
             $evento->save();
             $evento->load('servicios');
+
             return response()->json($evento);
 
-        }else{
-            return response()->json("Solo el gerente puede agregar eventos",403);
+        } else {
+            return response()->json('Solo el gerente puede agregar eventos', 403);
         }
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Request $r, Evento  $evento)
+    public function show(Request $r, Evento $evento)
     {
-        if(Gate::allows('view', $evento )){
+        if (Gate::allows('view', $evento)) {
             $evento->load('servicios', 'fotos');
+
             return response()->json($evento);
-        }else{
-            return response()->json("El usuario actual no puede ver este evento",403);
+        } else {
+            return response()->json('El usuario actual no puede ver este evento', 403);
         }
     }
-
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateEventoRequest $request, Evento  $evento)
+    public function update(UpdateEventoRequest $request, Evento $evento)
     {
-        if(Gate::allows('update', $evento )){
+        if (Gate::allows('update', $evento)) {
             $usuario = Auth::getUser();
             $gerente = $usuario->rol == 'Gerente';
             $acumulado = Paquete::find($evento->paquete_id)->precio;
-            $datos=$request->all();
+            $datos = $request->all();
 
-            if(isset($datos['nombre']))$evento->nombre = $datos['nombre'];
-            if(isset($datos['usuario_id']))$evento->usuario_id = $datos['usuario_id'];
-            if(isset($datos['paquete_id']))$evento->paquete_id = $datos['paquete_id'];
- //           if($gerente && isset($datos['precio']))$evento->precio = $datos['precio'];
-            if(isset($datos['fecha']))$evento->fecha =date($datos['fecha']);
-            if(isset($datos['hora_inicio']))$evento->hora_inicio = Carbon::parse($datos['hora_inicio'])->format('H:i:s');
+            if (isset($datos['nombre'])) {
+                $evento->nombre = $datos['nombre'];
+            }
+            if (isset($datos['usuario_id'])) {
+                $evento->usuario_id = $datos['usuario_id'];
+            }
+            if (isset($datos['paquete_id'])) {
+                $evento->paquete_id = $datos['paquete_id'];
+            }
+            //           if($gerente && isset($datos['precio']))$evento->precio = $datos['precio'];
+            if (isset($datos['fecha'])) {
+                $evento->fecha = date($datos['fecha']);
+            }
+            if (isset($datos['hora_inicio'])) {
+                $evento->hora_inicio = Carbon::parse($datos['hora_inicio'])->format('H:i:s');
+            }
 
-           
-            if($gerente && isset($datos['hora_fin']))
-                $evento->hora_fin=Carbon::parse($datos['hora_fin'])->format('H:i:s');
-            else
-                $evento->hora_fin= Carbon::parse($request->hora_inicio)->addHours(6)->format('H:i:s');
-            if(isset($datos['descripcion']))$evento->descripcion = $datos['descripcion'];
-    
-            if(isset($datos['servicios'])){
+            if ($gerente && isset($datos['hora_fin'])) {
+                $evento->hora_fin = Carbon::parse($datos['hora_fin'])->format('H:i:s');
+            } else {
+                $evento->hora_fin = Carbon::parse($request->hora_inicio)->addHours(6)->format('H:i:s');
+            }
+            if (isset($datos['descripcion'])) {
+                $evento->descripcion = $datos['descripcion'];
+            }
+
+            if (isset($datos['servicios'])) {
                 $evento->servicios()->detach();
                 foreach ($datos['servicios'] as $servicio) {
                     $servicio = Servicio::find($servicio);
                     $acumulado += $servicio->precio;
-                    $evento -> servicios() -> attach($servicio,['servicio_precio'=> $servicio->precio]);
+                    $evento->servicios()->attach($servicio, ['servicio_precio' => $servicio->precio]);
                 }
             }
 
-            if($gerente && isset($datos['precio']))$evento->precio = $datos['precio'];
-            else $evento->precio =$acumulado;
+            if ($gerente && isset($datos['precio'])) {
+                $evento->precio = $datos['precio'];
+            } else {
+                $evento->precio = $acumulado;
+            }
             $evento->save();
             $evento->load('servicios', 'fotos');
+
             return response()->json($evento);
-        }else{
-            return response()->json("El usuario actual no puede actualizar este evento",403);
+        } else {
+            return response()->json('El usuario actual no puede actualizar este evento', 403);
         }
 
     }
@@ -189,19 +211,18 @@ class EventoController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Evento  $evento)
+    public function destroy(Evento $evento)
     {
         $this->authorize('delete', $evento);
         if ($evento) {
             $evento->servicios()->detach();
             $evento->delete();
-            return response()->json($evento,200);
-        }else
-        {
-            return response()->json($evento,400);
+
+            return response()->json($evento, 200);
+        } else {
+            return response()->json($evento, 400);
         }
     }
-
 
     /**
      * Confirmar un evento
@@ -209,63 +230,69 @@ class EventoController extends Controller
     public function confirmar(ConfirmarEventoRequest $request, Evento $evento)
     {
         $usuario = Auth::getUser();
-        if(Gate::allows('confirmar' , $evento )){  
-            Log::channel('debug')->info("Confirmando");
-            $evento->confirmacion = "confirmado";
+        if (Gate::allows('confirmar', $evento)) {
+            Log::channel('debug')->info('Confirmando');
+            $evento->confirmacion = 'confirmado';
             $evento->gerente_id = $usuario->id;
-            if(  isset($request->precio) ) $evento->precio  =  $request->precio;            
-            $evento->motivo = NULL;
+            if (isset($request->precio)) {
+                $evento->precio = $request->precio;
+            }
+            $evento->motivo = null;
             $evento->save();
+
             return response()->json($evento);
 
-        }else{
-            return response()->json("Solo el gerente puede confirmar eventos",403);
+        } else {
+            return response()->json('Solo el gerente puede confirmar eventos', 403);
         }
     }
-
 
     /**
      * Rechazar un evento
      */
-    public function rechazar(RechazarEventoRequest $request,  Evento $evento)
+    public function rechazar(RechazarEventoRequest $request, Evento $evento)
     {
         $usuario = Auth::getUser();
-        if(Gate::allows('rechazar' , $evento )){  
-            Log::channel('debug')->info("rechazando");
-            $evento->confirmacion = "rechazado";
+        if (Gate::allows('rechazar', $evento)) {
+            Log::channel('debug')->info('rechazando');
+            $evento->confirmacion = 'rechazado';
             $evento->gerente_id = $usuario->id;
             $evento->motivo = $request->motivo;
             $evento->save();
+
             return response()->json($evento);
-        }else{
-            return response()->json("Solo el gerente puede rechazar eventos",403);
+        } else {
+            return response()->json('Solo el gerente puede rechazar eventos', 403);
         }
     }
-    public function totalAbonos(Evento $evento){
-        if (Gate::allows('total',$evento)) {
-            if( $evento->confirmacion == 'confirmado'){
 
-                return response()->json(["monto"=>$evento->precio, "abonado" => $evento->totalAbonos()]);
-            }else{
-                return response()->json("El evento no esta confirmado",422);
+    public function totalAbonos(Evento $evento)
+    {
+        if (Gate::allows('total', $evento)) {
+            if ($evento->confirmacion == 'confirmado') {
+
+                return response()->json(['monto' => $evento->precio, 'abonado' => $evento->totalAbonos()]);
+            } else {
+                return response()->json('El evento no esta confirmado', 422);
             }
-        }else{
-            return response()->json("El usuario actual no puede ver el total de abonos",403);
+        } else {
+            return response()->json('El usuario actual no puede ver el total de abonos', 403);
 
         }
     }
-    public function totalGastos(Evento $evento){
-        if (Gate::allows('total',$evento)) {
-            if( $evento->confirmacion == 'confirmado'){
 
-                return response()->json(["monto"=>$evento->precio, "gastado" => $evento->totalGastos()]);
-            }else{
-                return response()->json("El evento no esta confirmado",422);
+    public function totalGastos(Evento $evento)
+    {
+        if (Gate::allows('total', $evento)) {
+            if ($evento->confirmacion == 'confirmado') {
+
+                return response()->json(['monto' => $evento->precio, 'gastado' => $evento->totalGastos()]);
+            } else {
+                return response()->json('El evento no esta confirmado', 422);
             }
-        }else{
-            return response()->json("El usuario actual no puede ver el total de gastos",403);
+        } else {
+            return response()->json('El usuario actual no puede ver el total de gastos', 403);
 
         }
     }
-
 }

@@ -8,8 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class Usable extends Model
 {
     use HasFactory;
-    protected $fillable = [
-        'publica_id', 'usa_id', 'usa_type','created_at','updated_at'
-    ] ;
 
+    protected $fillable = [
+        'publica_id', 'usa_id', 'usa_type', 'created_at', 'updated_at',
+    ];
 }

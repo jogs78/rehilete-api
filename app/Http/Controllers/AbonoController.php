@@ -18,17 +18,17 @@ class AbonoController extends Controller
     {
         $evRealizados = Evento::where('confirmacion', 'confirmado')->where('realizado', false)->get();
         //return $evRealizados->toJson();
-        $paquetes = Paquete::pluck('id','nombre');
-        $servicios = Servicio::pluck('id','nombre');
+        $paquetes = Paquete::pluck('id', 'nombre');
+        $servicios = Servicio::pluck('id', 'nombre');
         $datosPivot = DB::table('evento_servicio')->get();
         $abonos = Abono::all();
-        
+
         return response()->json([
-            'servicios'=> $servicios->toJson(),
-            'evRealizados'=> $evRealizados->toJson(),
-            'datosextras'=> $datosPivot->toJson(),
-            'paquetes'=> $paquetes->toJson(),
-            'abonos'=> $abonos->toJson(),
+            'servicios' => $servicios->toJson(),
+            'evRealizados' => $evRealizados->toJson(),
+            'datosextras' => $datosPivot->toJson(),
+            'paquetes' => $paquetes->toJson(),
+            'abonos' => $abonos->toJson(),
         ]);
     }
 
@@ -45,14 +45,14 @@ class AbonoController extends Controller
      */
     public function store(Request $request)
     {
-        $abono = new Abono();
+        $abono = new Abono;
         $abono->evento_id = $request->evento_id;
         $abono->usuario_id = $request->usuario_id;
         $abono->descripcion = $request->descripcion;
         $abono->cantidad = $request->cantidad;
         $abono->save();
 
-        return response()->json(["success"=> "No hay errores"],200);
+        return response()->json(['success' => 'No hay errores'], 200);
     }
 
     /**
@@ -61,9 +61,9 @@ class AbonoController extends Controller
     public function show($id)
     {
         $abono = Abono::find($id);
+
         return $abono->toJson();
     }
-
 
     /**
      * Update the specified resource in storage.
@@ -88,10 +88,10 @@ class AbonoController extends Controller
         $abono = Abono::find($id);
         if ($abono) {
             $abono->delete();
-            return response()->json(["success"=> "abono eliminado correctamente"],200);
-        }else
-        {
-            return response()->json(["errors"=> "No se pudo eliminar el abono"],400);
+
+            return response()->json(['success' => 'abono eliminado correctamente'], 200);
+        } else {
+            return response()->json(['errors' => 'No se pudo eliminar el abono'], 400);
         }
     }
 }

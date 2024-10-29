@@ -14,13 +14,14 @@ class EventoPublicaControllerimagenes extends Controller
      */
     public function index(Evento $evento)
     {
-        $fotos = Publica::whereIn('id',Usable::wehere('ofece_type','Evento')->pluck('ofrece_id'))->get();
+        $fotos = Publica::whereIn('id', Usable::wehere('ofece_type', 'Evento')->pluck('ofrece_id'))->get();
+
         return response()->json($fotos);
-//        return Publica::whereNotIn('id', Usable::pluck('ofrece_id'))->get();
+        //        return Publica::whereNotIn('id', Usable::pluck('ofrece_id'))->get();
     }
 
     /**
-      * Show the form for creating a new resource.
+     * Show the form for creating a new resource.
      */
     public function create(Evento $evento)
     {

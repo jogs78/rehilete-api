@@ -5,7 +5,6 @@ namespace App\Policies;
 use App\Models\Paquete;
 use App\Models\User;
 use App\Models\Usuario;
-use Illuminate\Auth\Access\Response;
 
 class PaquetePolicy
 {
@@ -22,10 +21,14 @@ class PaquetePolicy
      */
     public function update(Usuario $user, Paquete $paquete): bool
     {
-        if( $user->rol === 'Gerente'){
-            if($paquete->eventosConfirmadosPendientes->count()>0) return false;
+        if ($user->rol === 'Gerente') {
+            if ($paquete->eventosConfirmadosPendientes->count() > 0) {
+                return false;
+            }
+
             return true;
         }
+
         return false;
     }
 
@@ -34,10 +37,14 @@ class PaquetePolicy
      */
     public function delete(Usuario $user, Paquete $paquete): bool
     {
-        if( $user->rol === 'Gerente'){
-            if($paquete->eventosConfirmadosPendientes->count()>0) return false;
+        if ($user->rol === 'Gerente') {
+            if ($paquete->eventosConfirmadosPendientes->count() > 0) {
+                return false;
+            }
+
             return true;
         }
+
         return false;
 
     }

@@ -27,13 +27,13 @@ class StoreAbonoRequest extends FormRequest
             'cantidad' => ['required', 'numeric'],
         ];
     }
+
     public function messages(): array
     {
         return [
-            '*.required'=>'El campo :attribute es requerido',
-            '*.string'=>'El campo :attribute debe ser un texto',
-            '*.numeric'=>'El campo :attribute debe ser numerico',
+            '*.required' => 'El campo :attribute es requerido',
+            '*.string' => 'El campo :attribute debe ser un texto',
+            '*.numeric' => 'El campo :attribute debe ser numerico',
         ];
     }
 }
-

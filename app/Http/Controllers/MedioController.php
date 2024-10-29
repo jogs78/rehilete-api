@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Medio;
 use App\Http\Requests\StoreMedioRequest;
 use App\Http\Requests\UpdateMedioRequest;
+use App\Models\Medio;
 
 class MedioController extends Controller
 {

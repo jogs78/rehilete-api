@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+
 class ConfirmarEventoRequest extends FormRequest
 {
     /**
@@ -20,9 +21,9 @@ class ConfirmarEventoRequest extends FormRequest
      */
     public function rules(): array
     {
-            return [
-                'precio' => 'nullable|number',
-            ];
+        return [
+            'precio' => 'nullable|number',
+        ];
     }
 
     public function messages()

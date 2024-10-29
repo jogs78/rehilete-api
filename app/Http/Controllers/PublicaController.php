@@ -5,14 +5,13 @@ namespace App\Http\Controllers;
 use App\Models\Evento;
 use App\Models\Paquete;
 use App\Models\Publica;
-use Illuminate\Http\Request;
 use App\Models\Servicio;
 use App\Models\Usable;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 class PublicaController extends Controller
 {
@@ -21,6 +20,7 @@ class PublicaController extends Controller
         // Llama al método de actualización de estados al construir la instancia del controlador
         //$this->actualizarEstadoEventos();
     }
+
     //esto debe ir a un cron job
     public function actualizarEstadoEventos()
     {
@@ -28,10 +28,10 @@ class PublicaController extends Controller
         $eventosPendientes = Evento::where('confirmacion', 'confirmado')
             ->where(function ($query) {
                 $query->where('fecha', '<', now()->toDateString())
-                      ->orWhere(function ($query) {
-                          $query->where('fecha', '=', now()->toDateString())
-                                ->where('hora_fin', '<', now()->toTimeString());
-                      });
+                    ->orWhere(function ($query) {
+                        $query->where('fecha', '=', now()->toDateString())
+                            ->where('hora_fin', '<', now()->toTimeString());
+                    });
             })->get();
 
         // Actualiza el estado de los eventos
@@ -43,24 +43,25 @@ class PublicaController extends Controller
         return response()->json(['message' => 'Estado de eventos actualizado correctamente']);
     }
 
-
     //para que es esto, no debe responder con varias cosas...
     public function index2()
     {
         $evRealizados = Evento::where('realizado', true)->get();
         //return $evRealizados->toJson();
-        $paquetes = Paquete::pluck('id','nombre');
-        $servicios = Servicio::pluck('id','nombre');
+        $paquetes = Paquete::pluck('id', 'nombre');
+        $servicios = Servicio::pluck('id', 'nombre');
         $datosPivot = DB::table('evento_servicio')->get();
         $datosPaq = DB::table('paquete_servicio')->get();
+
         return response()->json([
-            'servicios'=> $servicios->toJson(),
+            'servicios' => $servicios->toJson(),
             'evRealizados' => $evRealizados->toJson(),
             'datosextras' => $datosPivot->toJson(),
             'paquetes' => $paquetes->toJson(),
             'datospaquetes' => $datosPaq->toJson(),
         ]);
     }
+
     /**
      * Display a listing of the resource.
      */
@@ -82,22 +83,22 @@ class PublicaController extends Controller
      */
     public function store(Request $request)
     {
-//        Log::channel('debug')->info('entra post.');
-//        Log::channel('debug')->info(json_encode($request->file('imagenes')));
+        //        Log::channel('debug')->info('entra post.');
+        //        Log::channel('debug')->info(json_encode($request->file('imagenes')));
         $usuario = Auth::getUser();
 
         foreach ($request->file('imagenes') as $image) {
             Log::channel('debug')->info('IMAGEN x.');
 
-            $imgName = time().rand(1,100).'.'.$image->extension();
-            
-            $image->storeAs('', $imgName,'publicas');
+            $imgName = time().rand(1, 100).'.'.$image->extension();
+
+            $image->storeAs('', $imgName, 'publicas');
             //Storage::disk('publicas')->putFile('', $image, $imgName);
-            
-            $imagen = new Publica();
+
+            $imagen = new Publica;
             $imagen->ruta = $imgName;
             $imagen->nombre = $image->getClientOriginalName();
-            $imagen->usuario_id= $usuario->id;
+            $imagen->usuario_id = $usuario->id;
             $imagen->descripcion = $request->descripcion;
             $imagen->save();
             //print_r("Hola");
@@ -130,10 +131,11 @@ class PublicaController extends Controller
      * Update the specified resource in storage.
      */
     public function update(Request $request, Publica $publica)
-    {   
+    {
         $publica->usuario_id = $request->usuario_id;
         $publica->descripcion = $request->descripcion;
         $publica->save();
+
         return $publica->toJson();
     }
 
@@ -145,10 +147,10 @@ class PublicaController extends Controller
         if ($publica) {
             Storage::disk('publicas')->delete($publica->ruta);
             $publica->delete();
-            return response()->json(["success"=> "Foto Publica eliminada correctamente"],200);
-        }else
-        {
-            return response()->json(["errors"=> "No se pudo eliminar la Foto Publica"],400);
+
+            return response()->json(['success' => 'Foto Publica eliminada correctamente'], 200);
+        } else {
+            return response()->json(['errors' => 'No se pudo eliminar la Foto Publica'], 400);
         }
     }
 }

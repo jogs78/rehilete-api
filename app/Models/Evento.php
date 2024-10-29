@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Evento extends Model
 {
     use HasFactory;
+
     protected $fillable = [
         'nombre', 'usuario_id', 'paquete_id', 'paquete_precio', 'precio',
         'fecha', 'hora_inicio', 'hora_fin', 'descripcion', 'gerente_id',
@@ -29,32 +30,41 @@ class Evento extends Model
         return $this->belongsToMany(Servicio::class);
     }
 
-    public function fotos(){
+    public function fotos()
+    {
         return $this->hasMany(Foto::class);
     }
 
-    public function gastos(){
+    public function gastos()
+    {
         return $this->hasMany(Gasto::class);
     }
-    public function totalgastos(){
+
+    public function totalgastos()
+    {
         return $this->gastos()->sum('cantidad');
     }
 
-    public function abonos(){
+    public function abonos()
+    {
         return $this->hasMany(Abono::class);
     }
+
     public function totalAbonos(): float
     {
         return $this->abonos()->sum('cantidad');
     }
-    public function dueño(){
-        return $this->hasOne(Usuario::class, "id","usuario_id");
+
+    public function dueño()
+    {
+        return $this->hasOne(Usuario::class, 'id', 'usuario_id');
     }
 
-    public function gerente(){
-        return $this->hasOne(Usuario::class, "id","gerente_id")
+    public function gerente()
+    {
+        return $this->hasOne(Usuario::class, 'id', 'gerente_id')
 //        ->withDefault();
-        ->withDefault(["nombre"=>"Sin gerente que haya revisado"]);
+            ->withDefault(['nombre' => 'Sin gerente que haya revisado']);
 
     }
 }

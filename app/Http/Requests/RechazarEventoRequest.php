@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+
 class RechazarEventoRequest extends FormRequest
 {
     /**
@@ -20,9 +21,9 @@ class RechazarEventoRequest extends FormRequest
      */
     public function rules(): array
     {
-            return [
-                'motivo' => 'required',
-            ];
+        return [
+            'motivo' => 'required',
+        ];
     }
 
     public function messages()

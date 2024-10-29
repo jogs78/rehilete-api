@@ -8,8 +8,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 
-
-
 class PaqueteServicioController extends Controller
 {
     /**
@@ -32,25 +30,22 @@ class PaqueteServicioController extends Controller
                 'required',
                 'array',
                 Rule::requiredIf(function () use ($request) {
-                    return !empty($request->servicios) 
-                    && !empty($request->cantidades) 
-                    && count($request->servicios) !== 
+                    return ! empty($request->servicios)
+                    && ! empty($request->cantidades)
+                    && count($request->servicios) !==
                     count($request->cantidades);
-                })
+                }),
             ],
         ], [
             'servicios.required' => 'El campo :attribute es obligatorio.',
             'cantidades.required' => 'Los arreglos servicios y cantidades deben tener el mismo tamaño.',
             'servicios.array' => 'El campo :attribute debe ser un arreglo.',
-            'cantidades.array' => 'El campo :attribute debe ser un arreglo.'
+            'cantidades.array' => 'El campo :attribute debe ser un arreglo.',
         ]);
-
 
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
         }
-
-
 
         $servicios = $request->servicios;
         $cantidades = $request->cantidades;
@@ -61,12 +56,13 @@ class PaqueteServicioController extends Controller
             } else {
                 //jogs modificar que no sea cantidades[#misma_key]
                 // Si no hay cantidad asociada o es cero, no agregar el servicio
-                if (!array_key_exists($servicio, $cantidades) || $cantidades[$servicio] != 0) {
+                if (! array_key_exists($servicio, $cantidades) || $cantidades[$servicio] != 0) {
                     $paquete->servicios()->attach($servicio);
                 }
             }
         }
-        return response()->json($paquete->servicios);        
+
+        return response()->json($paquete->servicios);
     }
 
     /**
@@ -75,6 +71,7 @@ class PaqueteServicioController extends Controller
     public function destroy(Paquete $paquete, Servicio $servicio)
     {
         $paquete->servicios()->detach($servicio->id);
+
         return response()->json($paquete->servicios);
     }
 }

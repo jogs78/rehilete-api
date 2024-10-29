@@ -14,7 +14,7 @@ class AbonoPolicy
      */
     public function viewAny(Usuario $usuario, Evento $evento): bool
     {
-        Log::channel('debug')->info("Dentro de la politica viewAny \n\tuser:" . $usuario->toJson() . ", \n\tevento:" . $evento->toJson());
+        Log::channel('debug')->info("Dentro de la politica viewAny \n\tuser:".$usuario->toJson().", \n\tevento:".$evento->toJson());
 
         if ($usuario->rol == 'Gerente' || $usuario->rol == 'Empleado') {
             return true;
@@ -31,7 +31,9 @@ class AbonoPolicy
     {
         if ($usuario->rol == 'Gerente' || $usuario->rol == 'Empleado') {
             return true;
-        } else return false;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -39,9 +41,10 @@ class AbonoPolicy
      */
     public function delete(Usuario $usuario, Abono $abono): bool
     {
-        if ($usuario->rol == 'Gerente' ) {
+        if ($usuario->rol == 'Gerente') {
             return true;
-        } else return false;
+        } else {
+            return false;
+        }
     }
-
 }

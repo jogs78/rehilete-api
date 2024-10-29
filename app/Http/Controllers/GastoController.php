@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Gasto;
-use App\Models\Usuario;
 use App\Models\Evento;
-use App\Models\Servicio;
+use App\Models\Gasto;
 use App\Models\Paquete;
+use App\Models\Servicio;
+use App\Models\Usuario;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -17,16 +17,17 @@ class GastoController extends Controller
         // Llama al método de actualización de estados al construir la instancia del controlador
         //$this->actualizarEstadoEventos();
     }
+
     public function actualizarEstadoEventos()
     {
         // Obtén los eventos confirmados que cumplen con la condición
         $eventosPendientes = Evento::where('confirmacion', 'confirmado')
             ->where(function ($query) {
                 $query->where('fecha', '<', now()->toDateString())
-                      ->orWhere(function ($query) {
-                          $query->where('fecha', '=', now()->toDateString())
-                                ->where('hora_fin', '<', now()->toTimeString());
-                      });
+                    ->orWhere(function ($query) {
+                        $query->where('fecha', '=', now()->toDateString())
+                            ->where('hora_fin', '<', now()->toTimeString());
+                    });
             })->get();
 
         // Actualiza el estado de los eventos
@@ -37,6 +38,7 @@ class GastoController extends Controller
         // Puedes devolver una respuesta o redireccionar según tus necesidades
         return response()->json(['message' => 'Estado de eventos actualizado correctamente']);
     }
+
     /**
      * Display a listing of the resource.
      */
@@ -45,8 +47,8 @@ class GastoController extends Controller
         $usuario = auth()->User();
         $evRealizados = Evento::where('realizado', true)->get();
         //return $evRealizados->toJson();
-        $paquetes = Paquete::pluck('id','nombre');
-        $servicios = Servicio::pluck('id','nombre');
+        $paquetes = Paquete::pluck('id', 'nombre');
+        $servicios = Servicio::pluck('id', 'nombre');
         $datosPivot = DB::table('evento_servicio')->get();
         $datosPaq = DB::table('paquete_servicio')->get();
         $gastos = Gasto::all();
@@ -65,14 +67,14 @@ class GastoController extends Controller
                 # code...
                 break;
         }*/
-        
+
         return response()->json([
-            'servicios'=> $servicios->toJson(),
-            'evRealizados'=> $evRealizados->toJson(),
-            'datosextras'=> $datosPivot->toJson(),
-            'paquetes'=> $paquetes->toJson(),
-            'datospaquetes'=> $datosPaq->toJson(),
-            'gastos'=> $gastos->toJson(),
+            'servicios' => $servicios->toJson(),
+            'evRealizados' => $evRealizados->toJson(),
+            'datosextras' => $datosPivot->toJson(),
+            'paquetes' => $paquetes->toJson(),
+            'datospaquetes' => $datosPaq->toJson(),
+            'gastos' => $gastos->toJson(),
         ]);
     }
 
@@ -89,13 +91,13 @@ class GastoController extends Controller
      */
     public function store(Request $request)
     {
-        $gasto = new Gasto();
+        $gasto = new Gasto;
         $gasto->evento_id = $request->evento_id;
         $gasto->descripcion = $request->descripcion;
         $gasto->cantidad = $request->cantidad;
         $gasto->save();
 
-        return response()->json(["success"=> "No hay errores"],200);
+        return response()->json(['success' => 'No hay errores'], 200);
     }
 
     /**
@@ -104,9 +106,9 @@ class GastoController extends Controller
     public function show($id)
     {
         $gasto = Gasto::find($id);
+
         return $gasto->toJson();
     }
-
 
     /**
      * Update the specified resource in storage.
@@ -130,10 +132,10 @@ class GastoController extends Controller
         $gasto = Gasto::find($id);
         if ($gasto) {
             $gasto->delete();
-            return response()->json(["success"=> "Evento eliminado correctamente"],200);
-        }else
-        {
-            return response()->json(["errors"=> "No se pudo eliminar el Evento"],400);
+
+            return response()->json(['success' => 'Evento eliminado correctamente'], 200);
+        } else {
+            return response()->json(['errors' => 'No se pudo eliminar el Evento'], 400);
         }
     }
 }

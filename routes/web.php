@@ -1,8 +1,7 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,13 +18,13 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('migrar',function(){
-    echo "Borrar:<br>";
+Route::get('migrar', function () {
+    echo 'Borrar:<br>';
     Artisan::call('db:wipe');
-    echo "Migrar<br>";
-    Artisan::call('migrate', 
-    [
-       '--seed' => true,
-       '--force' => true
-    ]);
+    echo 'Migrar<br>';
+    Artisan::call('migrate',
+        [
+            '--seed' => true,
+            '--force' => true,
+        ]);
 });

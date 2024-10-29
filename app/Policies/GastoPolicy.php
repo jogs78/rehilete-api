@@ -2,10 +2,11 @@
 
 namespace App\Policies;
 
-use App\Models\Gasto;
 use App\Models\Evento;
+use App\Models\Gasto;
 use App\Models\Usuario;
 use Illuminate\Support\Facades\Log;
+
 class GastoPolicy
 {
     /**
@@ -13,9 +14,9 @@ class GastoPolicy
      */
     public function viewAny(Usuario $usuario, Evento $evento): bool
     {
-        Log::channel('debug')->info("Dentro de la politica del gasto viewAny \n\tuser:" . $usuario->toJson() . ", \n\tevento:" . $evento->toJson());
+        Log::channel('debug')->info("Dentro de la politica del gasto viewAny \n\tuser:".$usuario->toJson().", \n\tevento:".$evento->toJson());
 
-        if ($usuario->rol == 'Gerente' ) {
+        if ($usuario->rol == 'Gerente') {
             return true;
         } else {
             // Puedes ahora usar $evento en la lógica de autorización
@@ -36,13 +37,13 @@ class GastoPolicy
      */
     public function create(Usuario $usuario, Evento $evento): bool
     {
-        $g =$usuario->rol == 'Gerente';
+        $g = $usuario->rol == 'Gerente';
         $p = $evento->gerente_id;
         $u = $usuario->id;
 
-        Log::channel('debug')->info( $g );
-        Log::channel('debug')->info( $p );
-        Log::channel('debug')->info( $u );
+        Log::channel('debug')->info($g);
+        Log::channel('debug')->info($p);
+        Log::channel('debug')->info($u);
 
         return $usuario->rol == 'Gerente' && $evento->gerente_id == $usuario->id;
     }

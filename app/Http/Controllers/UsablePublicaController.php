@@ -15,7 +15,7 @@ class UsablePublicaController extends Controller
     {
 
         return Publica::whereNotIn('id', Usable::pluck('ofrece_id'))->get();
-        
+
     }
 
     /**

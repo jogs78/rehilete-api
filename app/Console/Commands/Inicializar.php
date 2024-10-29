@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
+
 class Inicializar extends Command
 {
     /**
@@ -26,10 +27,10 @@ class Inicializar extends Command
     public function handle()
     {
         Artisan::call('db:wipe');
-        Artisan::call('migrate', 
-        [
-           '--seed' => true,
-           '--force' => true
-        ]);        
+        Artisan::call('migrate',
+            [
+                '--seed' => true,
+                '--force' => true,
+            ]);
     }
 }
