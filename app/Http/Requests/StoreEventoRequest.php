@@ -26,7 +26,7 @@ class StoreEventoRequest extends FormRequest
             'paquete_id' => 'required|exists:paquetes,id',
             'fecha' => ['required', 'date', 'date_format:Y-m-d'],
 //            'hora_inicio' => ['required', 'integer', 'between:0,23'],
-            'hora_inicio' => ['required', 'date_format:H'],
+            'hora_inicio' => ['required', 'regex:/^(2[0-3]|[01]?[0-9])(:[0-5][0-9])?$/'],
             'descripcion' => 'required',
             'num_personas' => ['required', 'integer', 'between:1,100'],
             'servicios' => 'nullable|array', // Permite que 'servicios' sea nulo o un arreglo
@@ -38,7 +38,7 @@ class StoreEventoRequest extends FormRequest
             return array_merge($reglas,[
                 'usuario_id' => ['required', 'exists:usuarios,id'],
 //                'hora_fin' => ['nullable', 'integer', 'between:0,23'],
-                'hora_fin' => ['nullable', 'date_format:H'],
+                'hora_fin' => ['nullable', 'regex:/^(2[0-3]|[01]?[0-9])(:[0-5][0-9])?$/'],
                 'precio' => ['nullable', 'numeric'],
             ]);
 
@@ -50,7 +50,7 @@ class StoreEventoRequest extends FormRequest
             '*.required' => 'El campo :attribute es requerido',
             'fecha.date' => 'El campo :attribute debe ser una fecha valida',
             'fecha.date_format' => 'El campo :attribute debe cumplir el formato Año-Mes-Dia de la forma aaa-mm-dd',
-            'hora_inicio.date_format' => 'La hora de inicio debe de inicarse',
+            '*.regex' => 'La :attribute debe de indicarse en formato como un entero o en formato HH:SS',
             '*.integer' =>  'El campo :attribute debe ser un entero',
             '*.between' => 'El valor del campo :attribute debe estar entre :min y :max inclusive',
             'servicios.array' => 'El campo servicios debe ser un arreglo.',

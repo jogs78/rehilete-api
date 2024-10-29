@@ -22,7 +22,9 @@ class EventoAbonoController extends Controller
 
         if (Gate::allows('viewAny', [Abono::class, $evento])) {
             if( $evento->confirmacion == 'confirmado'){
-                return response()->json($evento->abonos);
+                $abonos = $evento->abonos;
+                if( sizeof($abonos)==0 ) return response()->json("sin abonos registrados"); 
+                else return response()->json($abonos);
             }else{
                 return response()->json("El evento no esta confirmado",422);
             }

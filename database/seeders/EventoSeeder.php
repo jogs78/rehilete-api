@@ -150,6 +150,7 @@ class EventoSeeder extends Seeder
         $evento->num_personas = 80;
         $evento->confirmacion = "confirmado";
         $evento->realizado = true;
+        $evento->gerente_id = 9;
         $evento->save();
         $evento->servicios()->attach([1,2,3]);
 

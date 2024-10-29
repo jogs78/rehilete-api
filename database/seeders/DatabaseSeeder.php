@@ -24,6 +24,7 @@ class DatabaseSeeder extends Seeder
             PaqueteSeeder::class,
             EventoSeeder::class,
             AbonoSeeder::class,
+            GastoSeeder::class,
         ]);
     }
 }

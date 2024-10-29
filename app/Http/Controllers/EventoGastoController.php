@@ -22,7 +22,9 @@ class EventoGastoController extends Controller
 
         if (Gate::allows('viewAny', [Gasto::class, $evento])) {
             if( $evento->confirmacion == 'confirmado'){
-                return response()->json($evento->gastos);
+                $gastos = $evento->gastos;
+                if( sizeof($gastos)==0 ) return response()->json("sin gastos registrados"); 
+                else return response()->json($gastos);
             }else{
                 return response()->json("El evento no esta confirmado",422);
             }
@@ -39,7 +41,10 @@ class EventoGastoController extends Controller
      */
     public function store(StoreGastoRequest $request, Evento $evento)
     {
-        if (Gate::allows('create', Gasto::class)) {
+//        $user = Auth::getUser();
+//        Log::channel('debug')->info("Dentro del controller viewAny\n\tuser:" . $user->toJson() . ", \n\tevento:" . $evento->toJson());
+
+        if (Gate::allows('create', [Gasto::class, $evento])) {
             if( $evento->confirmacion == 'confirmado'){
                 $gasto = new gasto();
                 $gasto->evento_id = $evento->id;
@@ -53,7 +58,31 @@ class EventoGastoController extends Controller
                 return response()->json("El evento no esta confirmado",422);
             }
         }else{
-            return response()->json("El usuario actual no puede asentar gastos de este evento",403);
+            return response()->json("El usuario actual no puede acentar gastos de este evento",403);
+        }
+    }
+
+    /**
+     * Update a resource in storage.
+     */
+    public function update(StoreGastoRequest $request, Evento $evento, Gasto $gasto)
+    {
+//        $user = Auth::getUser();
+//        Log::channel('debug')->info("Dentro del controller viewAny\n\tuser:" . $user->toJson() . ", \n\tevento:" . $evento->toJson());
+
+        if (Gate::allows('delete', [$gasto, $evento])) {
+            if( $evento->confirmacion == 'confirmado'){
+                $gasto->descripcion = $request->descripcion;
+                $gasto->cantidad =  $request->cantidad;
+                $gasto->save();
+                Log::channel('debug')->info("Guardo la cantidad:" . $gasto->cantidad);
+                return response()->json($gasto);
+        
+            }else{
+                return response()->json("El evento no esta confirmado",422);
+            }
+        }else{
+            return response()->json("El usuario actual no puede acentar gastos de este evento",403);
         }
     }
 
