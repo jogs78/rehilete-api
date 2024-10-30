@@ -6,6 +6,7 @@ use App\Http\Requests\StorePaqueteRequest;
 use App\Models\Paquete;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Log;
 
 class PaqueteController extends Controller
 {
@@ -14,19 +15,24 @@ class PaqueteController extends Controller
      */
     public function index()
     {
+
         $usuario = auth()->User();
+
         if (is_null($usuario)) {
+            Log::channel('debug')->info("usuario nulo");
+
             $paquetes = Paquete::with('servicios', 'imagenes')->where('activo', true)->get();
 
             return response()->json($paquetes);
         }
+        
         switch ($usuario->rol) {
             case 'Gerente':
-                $paquetes = Paquete::with('servicios', 'imagenes')->all();
+                $paquetes = Paquete::with('servicios', 'imagenes')->get();
                 break;
             case 'Cliente':
             case 'Empleado':
-                $paquetes = Paquete::with('servicios', 'imagenes')->where('activo', true)->get();
+                $paquetes = Paquete::with('servicios', 'imagenes')->where('activo', true)->get(); //
                 break;
         }
 
