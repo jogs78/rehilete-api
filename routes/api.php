@@ -49,12 +49,12 @@ Route::delete('usuarios/{usuario}/avatar', [UsuarioController::class, 'borrarAva
 
 route::get('incializar', [AyudaController::class, 'inicializar'])->middleware('conToken');
 
-Route::apiResource('paquetes', PaqueteController::class, ['only' => ['index', 'show']])->middleware('sinToken');;
+Route::apiResource('paquetes', PaqueteController::class, ['only' => ['index', 'show']])->middleware('sinToken');
 Route::apiResource('paquetes', PaqueteController::class, ['except' => ['index', 'show']])->middleware('conToken');
 Route::get('paquetes/tipo', [PaqueteController::class, 'tipo'])->middleware('conToken')->name('paquetes.activar');
 
 Route::put('paquetes/activar/{paquete}', [PaqueteController::class, 'activar'])->middleware('conToken')->name('paquetes.activar');
-Route::apiResource('paquetes.medios', PaqueteMedioController::class, ['only' => ['index']]);
+Route::apiResource('paquetes.medios', PaqueteMedioController::class, ['only' => ['index']])->middleware('sinToken');
 Route::apiResource('paquetes.medios', PaqueteMedioController::class, ['except' => ['index', 'update']])->middleware('conToken');
 Route::apiResource('paquetes.servicios', PaqueteServicioController::class, ['except' => ['show', 'update']])->middleware('conToken');
 
