@@ -15,6 +15,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 class EventoController extends Controller
 {
@@ -59,7 +60,7 @@ class EventoController extends Controller
                 $eventos = Evento::with('servicios', 'fotos')->where('usuario_id', $usuario->id)->get();
                 break;
             case 'Empleado':
-                $eventos = Evento::with('servicios', 'fotos')->where('confirmacion', 'confirmado')->get();
+                $eventos = Evento::with('servicios', 'fotos')->where('confirmacion', 'confirmado')->where('realizado', '0')->get();
                 break;
             default:
                 // code...
@@ -74,10 +75,14 @@ class EventoController extends Controller
      */
     public function store(StoreEventoRequest $request)
     {
+
+
         if (Gate::allows('create', Evento::class)) {
             Log::channel('debug')->info('Confirmando');
             $usuario = Auth::getUser();
             $gerente = $usuario->rol == 'Gerente';
+            $acumulado = Paquete::find($request->paquete_id)->precio;
+
             $puso_fin = isset($request->hora_fin);
             $puso_precio = isset($request->precio);
             ob_start();
@@ -106,7 +111,9 @@ class EventoController extends Controller
                 $evento->gerente_id = $usuario->id;
             }
             $evento->num_personas = $request->num_personas; //en teoria deberia dar error si es mas de 100
+            $gerente && $puso_precio ? $evento->precio = $request->precio : $evento->precio = $acumulado;
 
+            $evento->save();
             if (isset($request->servicios)) {
                 $servicios = $request->servicios;
                 ob_start();
@@ -116,7 +123,10 @@ class EventoController extends Controller
                 foreach ($servicios as $servicio) {
                     $servicio = Servicio::find($servicio);
                     $acumulado += $servicio->precio;
+                    Log::channel('debug')->info("aqui");
                     $evento->servicios()->attach($servicio, ['servicio_precio' => $servicio->precio]);
+                    Log::channel('debug')->info("ya no");
+
                 }
             }
 
@@ -211,15 +221,29 @@ class EventoController extends Controller
      */
     public function destroy(Evento $evento)
     {
-        $this->authorize('delete', $evento);
-        if ($evento) {
-            $evento->servicios()->detach();
-            $evento->delete();
 
-            return response()->json($evento, 200);
-        } else {
-            return response()->json($evento, 400);
+        //SOLO SE PUEDE BORRAR SI... no esta confirmado
+        if (Gate::allows('delete', $evento)) {
+            if ($evento) {
+
+                //borra porque borra las fotos //se supone que no hay fotos
+                foreach($evento->fotos as $foto){
+                    Storage::disk('privadas')->delete($foto->ruta);
+                    $foto->delete();
+                }
+
+                $evento->servicios()->detach();
+                $evento->delete();
+    
+                return response()->json($evento, 200);
+            } else {
+                return response()->json($evento, 400);
+            }
+    
+        }else{
+            return response()->json('No se puede eliminar este evento', 403);
         }
+
     }
 
     /**

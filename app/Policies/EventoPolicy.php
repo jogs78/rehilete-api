@@ -52,6 +52,7 @@ class EventoPolicy
      */
     public function create(Usuario $user): bool
     {
+        Log::channel('debug')->info("El rol del que quiere agregar evento es : $user->rol");
         $ret = ! ($user->rol == 'Empleado');
         Log::channel('debug')->info("Puede crear un evento: $ret");
 
@@ -78,7 +79,8 @@ class EventoPolicy
                 $ret =  ($user->rol='Gerente' && (($evento->confirmacion == 'sin confirmar' || $evento->confirmacion == 'rechazado' )) )
                     ||  ($user->rol='Cliente' && (($evento->confirmacion == 'sin confirmar' || $evento->confirmacion == 'rechazado' )) );
         */
-        $ret = ($evento->confirmacion == 'sin confirmar' || $evento->confirmacion == 'rechazado') && ($user->rol = 'Gerente' || $user->rol = 'Cliente');
+        Log::channel('debug')->info("Puede borrar un evento un $user->rol");
+        $ret = ($evento->confirmacion == 'sin confirmar' || $evento->confirmacion == 'rechazado') && ($user->rol == 'Gerente' || ($user->rol == 'Cliente' && $evento->usuario_id == $user->id));
         Log::channel('debug')->info("Puede borrar un evento: $ret");
 
         return $ret;

@@ -34,6 +34,7 @@ class UpdateEventoRequest extends FormRequest
             'servicios' => 'nullable|array', // Permite que 'servicios' sea nulo o un arreglo
             'servicios.*' => 'exists:servicios,id', // Cada elemento debe existir en la tabla 'servicios'
         ];
+        if (Auth::user()->rol=="Empleado") return [];
         if (Auth::user()->rol == 'Cliente') {
             return $reglas;
         } else {
