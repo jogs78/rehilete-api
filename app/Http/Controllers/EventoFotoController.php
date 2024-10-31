@@ -16,7 +16,6 @@ class EventoFotoController extends Controller
      */
     public function index(Evento $evento)
     {
-        Log::channel('debug')->info('listar en el evento: '.$evento->tojson());
         $usuario = Auth::getUser();
         if (! $evento->realizado) {
             return response()->json('Sin fotos, el evento no se ha realizado');
@@ -46,9 +45,11 @@ class EventoFotoController extends Controller
                 return response()->json('No se encontraron fotos, no se ubica al usuario actual', 404);
                 break;
         }
-
-        return response()->json($fotos);
-
+        if ($fotos->isEmpty()) {
+            return response()->json(['message' => 'Listado vacío, no hay fotos']);
+        } else {
+            return response()->json($fotos);
+        }
     }
 
     /**
@@ -56,12 +57,17 @@ class EventoFotoController extends Controller
      */
     public function store(Request $request, Evento $evento)
     {
-        Log::channel('debug')->info('fotos:'.json_encode($request->file('imagenes')));
+
+        //debe venir: la foto que es el archivo y una descripcion que puede ser nulla y en caso de existir es un texto
+        ob_start();
+        var_dump($request->file('fotos'));
+        $salida = ob_get_clean();
+        Log::channel('debug')->info("fotos: $salida");
         Log::channel('debug')->info('del evento:'.$evento->id);
         $usuario = Auth::getUser();
-        foreach ($request->file('imagenes') as $imagen) {
-            Log::channel('debug')->info('IMAGEN x.');
+        foreach ($request->file('fotos') as $imagen) {
             $nombre = time().rand(1, 100).'.'.$imagen->extension();
+            Log::channel('debug')->info("IMAGEN : $nombre ");
             $imagen->storeAs('', $nombre, 'privadas');
 
             $foto = new Foto;

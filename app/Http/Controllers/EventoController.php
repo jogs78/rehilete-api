@@ -89,11 +89,9 @@ class EventoController extends Controller
             $hora_final = $hora_inicial;
             $gerente && $puso_fin ? $hora_final = Carbon::parse($request->hora_fin) : $hora_final = Carbon::parse($request->hora_inicio)->addHours(6);
 
-            $acumulado = Paquete::find($request->paquete_id)->precio;
-
             Log::channel('debug')->info('HORAS:'.$hora_inicial->format('H:i:s'));
             Log::channel('debug')->info('HORAS:'.$hora_final->format('H:i:s'));
-
+            Carbon::now()->utc();
             $evento = new Evento;
             $evento->nombre = $request->nombre;
             $evento->usuario_id = $gerente ? $request->usuario_id : $usuario->id;

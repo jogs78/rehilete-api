@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Evento;
+use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 
 class EventoSeeder extends Seeder
@@ -201,7 +202,7 @@ class EventoSeeder extends Seeder
         $evento->usuario_id = 2;
         $evento->paquete_id = 4;
         $evento->precio = 8000;
-        $evento->fecha = '2024-10-01';
+        $evento->fecha = Carbon::today()->format("Y-m-d");
         $evento->hora_inicio = '00:00';
         $evento->hora_fin = '23:59';
         $evento->descripcion = 'Pruebas con fotos';

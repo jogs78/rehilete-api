@@ -17,6 +17,7 @@ use App\Http\Controllers\UsablePublicaController;
 use App\Http\Controllers\UsuarioController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Artisan;
 
 /*
 |--------------------------------------------------------------------------
@@ -31,6 +32,18 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
+});
+
+Route::get('migrar', function () {
+    echo 'Borrar:<br>';
+    Artisan::call('db:wipe');
+    echo 'Migrar<br>';
+    Artisan::call('migrate',
+        [
+            '--seed' => true,
+            '--force' => true,
+        ]);
+    return response()->json("OK");
 });
 
 Route::post('entrada', [PuertaController::class, 'entrada']);
@@ -68,7 +81,7 @@ Route::apiResource('eventos.abonos', EventoAbonoController::class, ['except' => 
 Route::apiResource('eventos.gastos', EventoGastoController::class, ['except' => ['show']])->middleware('conToken');
 
 Route::apiResource('fotos', FotoController::class, ['only' => ['show']])->middleware('conToken');
-Route::apiResource('evento.fotos', EventoFotoController::class, ['except' => ['show', 'update']])->middleware('conToken');
+Route::apiResource('eventos.fotos', EventoFotoController::class, ['except' => ['show', 'update']])->middleware('conToken');
 
 Route::apiResource('publicas', PublicaController::class)->middleware('conToken');
 Route::apiResource('usable.publicas', UsablePublicaController::class)->middleware('conToken');
