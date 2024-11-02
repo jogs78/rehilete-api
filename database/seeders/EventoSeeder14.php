@@ -28,7 +28,7 @@ class EventoSeeder14 extends Seeder
         $evento->descripcion = 'Pruebas con fotos';
         $evento->num_personas = 80;
         $evento->confirmacion = 'confirmado';
-        $evento->realizado = true;
+        $evento->realizado = false;
         $evento->save();
         $evento->servicios()->attach([1, 2, 3]);
 

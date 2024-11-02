@@ -169,7 +169,7 @@ class EventoController extends Controller
             if (isset($datos['nombre'])) {
                 $evento->nombre = $datos['nombre'];
             }
-            if (isset($datos['usuario_id'])) {
+            if ($gerente && isset($datos['usuario_id'])) {
                 $evento->usuario_id = $datos['usuario_id'];
             }
             if (isset($datos['paquete_id'])) {
@@ -202,7 +202,7 @@ class EventoController extends Controller
             }
 
             if ($gerente && isset($datos['precio'])) {
-                $evento->precio = $datos['precio'];
+                $evento->precio = $request->precio;
             } else {
                 $evento->precio = $acumulado;
             }

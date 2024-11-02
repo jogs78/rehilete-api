@@ -1,9 +1,9 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Carbon\Carbon;
 
 class Evento extends Model
 {
@@ -67,4 +67,24 @@ class Evento extends Model
             ->withDefault(['nombre' => 'Sin gerente que haya revisado']);
 
     }
+
+    public function enRangoHorario()
+    {
+        // Obtener el inicio del día de la fecha del evento
+        $inicioDiaEvento = Carbon::parse($this->fecha)->startOfDay();
+
+        // Calcular el inicio y fin del rango
+        $horaInicio = Carbon::parse($this->fecha . ' ' . $this->hora_inicio);
+        $horaFin = Carbon::parse($this->fecha . ' ' . $this->hora_fin)->addHours(4);
+
+        // Si la hora fin es menor que la hora inicio, significa que el evento cruza a la madrugada
+        if ($horaFin->lessThan($horaInicio)) {
+            $horaFin->addDay(); // Avanzamos un día si el evento cruza a la madrugada
+        }
+
+        // Verificar si el momento actual está en el rango
+        $ahora = Carbon::now();
+        return $ahora->between($inicioDiaEvento, $horaFin);
+    }
+
 }

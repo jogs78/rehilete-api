@@ -81,7 +81,8 @@ Route::apiResource('eventos.abonos', EventoAbonoController::class, ['except' => 
 Route::apiResource('eventos.gastos', EventoGastoController::class, ['except' => ['show']])->middleware('conToken');
 
 Route::apiResource('fotos', FotoController::class, ['only' => ['show']])->middleware('conToken');
-Route::apiResource('eventos.fotos', EventoFotoController::class, ['except' => ['show', 'update']])->middleware('conToken');
+Route::apiResource('eventos.fotos', EventoFotoController::class)->middleware('conToken');
+Route::get('eventos/{evento}/fotos/{foto}/descripcion', [EventoFotoController::class,'descripcion'])->middleware('conToken');
 
 Route::apiResource('publicas', PublicaController::class)->middleware('conToken');
 Route::apiResource('usable.publicas', UsablePublicaController::class)->middleware('conToken');

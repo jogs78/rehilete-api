@@ -16,6 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('usuario_id');
             $table->unsignedBigInteger('evento_id');
             $table->string('ruta');
+            $table->string('nombre');
             $table->string('descripcion')->nullable();
             $table->foreign('evento_id')->references('id')->on('eventos');
             $table->foreign('usuario_id')->references('id')->on('usuarios');

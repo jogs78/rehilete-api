@@ -10,6 +10,7 @@ use App\Models\Medio;
 use App\Models\Paquete;
 use App\Models\Servicio;
 use App\Models\Usuario;
+use App\Models\Foto;
 use App\Policies\AbonoPolicy;
 use App\Policies\EventoPolicy;
 use App\Policies\GastoPolicy;
@@ -17,6 +18,8 @@ use App\Policies\MedioPolicy;
 use App\Policies\PaquetePolicy;
 use App\Policies\ServicioPolicy;
 use App\Policies\UsuarioPolicy;
+use App\Policies\FotoPolicy;
+
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 
 class AuthServiceProvider extends ServiceProvider
@@ -34,6 +37,7 @@ class AuthServiceProvider extends ServiceProvider
         Usuario::class => UsuarioPolicy::class,
         Abono::class => AbonoPolicy::class,
         Gasto::class => GastoPolicy::class,
+        Foto::class => FotoPolicy::class,
         //falta como son las politicas de abonos y de usuarios, gastos
     ];
 
