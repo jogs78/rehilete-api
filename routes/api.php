@@ -77,7 +77,7 @@ Route::get('eventos/{evento}/totalGastos', [EventoController::class, 'totalGasto
 Route::put('eventos/{evento}/confirmar', [EventoController::class, 'confirmar'])->middleware('conToken'); //
 Route::put('eventos/{evento}/rechazar', [EventoController::class, 'rechazar'])->middleware('conToken'); //
 
-Route::apiResource('eventos.abonos', EventoAbonoController::class, ['except' => ['show', 'update']])->middleware('conToken');
+Route::apiResource('eventos.abonos', EventoAbonoController::class, ['except' => ['update']])->middleware('conToken');
 Route::apiResource('eventos.gastos', EventoGastoController::class, ['except' => ['show']])->middleware('conToken');
 
 Route::apiResource('fotos', FotoController::class, ['only' => ['show']])->middleware('conToken');

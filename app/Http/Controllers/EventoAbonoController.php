@@ -8,6 +8,7 @@ use App\Models\Evento;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class EventoAbonoController extends Controller
 {
@@ -35,7 +36,17 @@ class EventoAbonoController extends Controller
 
         }
     }
+    /**
+     * Display the specified resource.
+     */
+    public function show(Evento $evento, Abono $abono)
+    {
+        $pdf = Pdf::loadView('abono/show');
 
+        // Devuelve el PDF para descargar
+        return $pdf->download('mi_documento.pdf');
+        //return view('abono/show');
+    }
     /**
      * Store a newly created resource in storage.
      */
