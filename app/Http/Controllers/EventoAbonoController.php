@@ -41,7 +41,7 @@ class EventoAbonoController extends Controller
      */
     public function show(Evento $evento, Abono $abono)
     {
-        $pdf = Pdf::loadView('abono/show');
+        $pdf = Pdf::loadView('abono/show',compact('abono'));
 
         // Devuelve el PDF para descargar
         return $pdf->download('mi_documento.pdf');

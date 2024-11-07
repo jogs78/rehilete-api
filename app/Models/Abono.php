@@ -13,4 +13,7 @@ class Abono extends Model
     {
         return $this->belognsTo(Usuario::class, 'id', 'quien_recibio');
     }
+    public function evento(){
+        return $this->belongsTo(Evento::class);
+    }
 }
