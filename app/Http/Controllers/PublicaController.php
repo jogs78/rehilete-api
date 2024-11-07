@@ -148,9 +148,9 @@ class PublicaController extends Controller
             Storage::disk('publicas')->delete($publica->ruta);
             $publica->delete();
 
-            return response()->json(['success' => 'Foto Publica eliminada correctamente'], 200);
+            return response()->json(['exito' => 'Foto Publica eliminada correctamente'], 200);
         } else {
-            return response()->json(['errors' => 'No se pudo eliminar la Foto Publica'], 400);
+            return response()->json(['error' => 'No se pudo eliminar la Foto Publica'], 400);
         }
     }
 }

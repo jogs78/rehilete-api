@@ -73,7 +73,7 @@
         </tr>
         <tr>
             <th>La suma de:</th>
-            <td colspan="3">${{$abono->cantidad}}</td>
+            <td colspan="3">${{ number_format($abono->cantidad, 2, '.', ',') }}</td>
         </tr>
         <tr>
             <th>Por concepto de:</th>
@@ -95,15 +95,15 @@
     <table class="total-section">
         <tr>
             <th>Total:</th>
-            <td><input type="text" style="width: 100%;"></td>
+            <td>${{ number_format($abono->evento->precio, 2, '.', ',') }}</td>
         </tr>
         <tr>
-            <th>Anticipo:</th>
-            <td><input type="text" style="width: 100%;"></td>
+            <th>Total de Abonos:</th>
+            <td>${{ number_format($abono->evento->totalAbonos(), 2, '.', ',') }}</td>
         </tr>
         <tr>
             <th>Resta:</th>
-            <td><input type="text" style="width: 100%;"></td>
+            <td>${{ number_format( $abono->evento->precio -  $abono->evento->totalAbonos() , 2, '.', ',') }}</td>
         </tr>
     </table>
 

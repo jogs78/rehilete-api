@@ -20,8 +20,8 @@ class EventoSeeder extends Seeder
         $evento->paquete_id = 3;
         $evento->precio = 10000;
         $evento->fecha = '2024-01-27';
-        $evento->hora_inicio = '00:00';
-        $evento->hora_fin = '04:30';
+        $evento->hora_inicio = '09:00';
+        $evento->hora_fin = '14:30';
         $evento->descripcion = 'Celebrare el cumpleaños de mi hijo, dice Hugo';
         $evento->num_personas = 150;
         $evento->confirmacion = 'sin confirmar';
@@ -35,7 +35,7 @@ class EventoSeeder extends Seeder
         $evento->paquete_id = 2;
         $evento->precio = 15000;
         $evento->fecha = '2024-02-27';
-        $evento->hora_inicio = '00:00';
+        $evento->hora_inicio = '10:00';
         $evento->hora_fin = '06:30';
         $evento->descripcion = 'Celebraremos los quince años de mi prima, paco';
         $evento->num_personas = 300;
@@ -51,7 +51,7 @@ class EventoSeeder extends Seeder
         $evento->paquete_id = 3;
         $evento->precio = 5000;
         $evento->fecha = '2024-03-27';
-        $evento->hora_inicio = '00:00';
+        $evento->hora_inicio = '11:00';
         $evento->hora_fin = '17:00';
         $evento->descripcion = 'Celebraremos el cumpleaños numero 10 de mi hijo, paco';
         $evento->num_personas = 50;
@@ -66,7 +66,7 @@ class EventoSeeder extends Seeder
         $evento->paquete_id = 4;
         $evento->precio = 8000;
         $evento->fecha = '2024-04-27';
-        $evento->hora_inicio = '00:00';
+        $evento->hora_inicio = '12:00';
         $evento->hora_fin = '17:30';
         $evento->descripcion = 'Bautizaremos a mi sobrinito';
         $evento->num_personas = 80;
@@ -82,7 +82,7 @@ class EventoSeeder extends Seeder
         $evento->paquete_id = 2;
         $evento->precio = 12000;
         $evento->fecha = '2024-05-27';
-        $evento->hora_inicio = '00:00';
+        $evento->hora_inicio = '13:00';
         $evento->hora_fin = '03:30';
         $evento->descripcion = 'Mi hija llega a sus xv años y lo haremos en grande';
         $evento->num_personas = 250;
@@ -97,8 +97,8 @@ class EventoSeeder extends Seeder
         $evento->paquete_id = 3;
         $evento->precio = 10000;
         $evento->fecha = '2024-06-27';
-        $evento->hora_inicio = '00:00';
-        $evento->hora_fin = '16:30';
+        $evento->hora_inicio = '12:00';
+        $evento->hora_fin = '20:30';
         $evento->descripcion = 'Celebrare el cumpleaños numero 6 de mis hijos';
         $evento->num_personas = 50;
         $evento->confirmacion = 'confirmado';
@@ -112,7 +112,7 @@ class EventoSeeder extends Seeder
         $evento->paquete_id = 2;
         $evento->precio = 15000;
         $evento->fecha = '2024-07-27';
-        $evento->hora_inicio = '00:00';
+        $evento->hora_inicio = '10:00';
         $evento->hora_fin = '06:30';
         $evento->descripcion = 'Celebraremos los quince años de mi hermana';
         $evento->num_personas = 100;
@@ -127,7 +127,7 @@ class EventoSeeder extends Seeder
         $evento->paquete_id = 3;
         $evento->precio = 5000;
         $evento->fecha = '2024-08-27';
-        $evento->hora_inicio = '00:00';
+        $evento->hora_inicio = '11:00';
         $evento->hora_fin = '17:00';
         $evento->descripcion = 'Celebraremos el cumpleaños numero 10 de mi hijo';
         $evento->num_personas = 150;
@@ -142,7 +142,7 @@ class EventoSeeder extends Seeder
         $evento->paquete_id = 4;
         $evento->precio = 8000;
         $evento->fecha = '2024-09-27';
-        $evento->hora_inicio = '00:00';
+        $evento->hora_inicio = '11:00';
         $evento->hora_fin = '17:30';
         $evento->descripcion = 'Bautizaremos a mi hijo';
         $evento->num_personas = 80;
@@ -159,8 +159,8 @@ class EventoSeeder extends Seeder
         $evento->paquete_id = 2;
         $evento->precio = 12000;
         $evento->fecha = '2024-05-27';
-        $evento->hora_inicio = '00:00';
-        $evento->hora_fin = '03:30';
+        $evento->hora_inicio = '20:00';
+        $evento->hora_fin = '02:00';
         $evento->descripcion = 'Mi hija llega a sus xv años y lo haremos en grande';
         $evento->num_personas = 250;
         $evento->confirmacion = 'sin confirmar';
@@ -174,7 +174,7 @@ class EventoSeeder extends Seeder
         $evento->paquete_id = 2;
         $evento->precio = 12000;
         $evento->fecha = '2024-05-28';
-        $evento->hora_inicio = '00:00';
+        $evento->hora_inicio = '20:00';
         $evento->hora_fin = '03:30';
         $evento->descripcion = 'TornaXV';
         $evento->num_personas = 250;
@@ -189,7 +189,7 @@ class EventoSeeder extends Seeder
         $evento->paquete_id = 2;
         $evento->precio = 12000;
         $evento->fecha = '2024-05-28';
-        $evento->hora_inicio = '00:00';
+        $evento->hora_inicio = '21:00';
         $evento->hora_fin = '03:30';
         $evento->descripcion = 'TornaXV';
         $evento->num_personas = 250;
@@ -203,7 +203,7 @@ class EventoSeeder extends Seeder
         $evento->paquete_id = 4;
         $evento->precio = 8000;
         $evento->fecha = Carbon::today()->format("Y-m-d");
-        $evento->hora_inicio = '00:00';
+        $evento->hora_inicio = '16:00';
         $evento->hora_fin = '23:59';
         $evento->descripcion = 'Pruebas con fotos';
         $evento->num_personas = 80;

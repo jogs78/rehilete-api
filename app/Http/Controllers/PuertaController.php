@@ -47,9 +47,9 @@ class PuertaController extends Controller
             $usuario->save();
             Auth::logout();
 
-            return response()->json(['success' => 'el usuario cerro sesion']);
+            return response()->json(['exito' => 'el usuario cerro sesion']);
         } else {
-            return response()->json(['errors' => 'el usuario '.$usuario->nombre_usuario.' no coincide su token ('.$usuario->token.') ('.$token.'), no se puede cerrar sesion'], 401);
+            return response()->json(['error' => 'el usuario '.$usuario->nombre_usuario.' no coincide su token ('.$usuario->token.') ('.$token.'), no se puede cerrar sesion'], 401);
         }
     }
 }

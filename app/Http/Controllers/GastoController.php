@@ -97,7 +97,7 @@ class GastoController extends Controller
         $gasto->cantidad = $request->cantidad;
         $gasto->save();
 
-        return response()->json(['success' => 'No hay errores'], 200);
+        return response()->json(['exito' => 'No hay errores'], 200);
     }
 
     /**
@@ -133,9 +133,9 @@ class GastoController extends Controller
         if ($gasto) {
             $gasto->delete();
 
-            return response()->json(['success' => 'Evento eliminado correctamente'], 200);
+            return response()->json(['exito' => 'Evento eliminado correctamente'], 200);
         } else {
-            return response()->json(['errors' => 'No se pudo eliminar el Evento'], 400);
+            return response()->json(['error' => 'No se pudo eliminar el Evento'], 400);
         }
     }
 }

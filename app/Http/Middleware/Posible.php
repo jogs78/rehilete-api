@@ -44,10 +44,10 @@ class Posible
                 //dump($usuario . 'hora');
                 return $next($request);
             } else {
-                return response()->json(['errors' => 'Debe autenticar nuevamente'], 401);
+                return response()->json(['error' => 'Debe autenticar nuevamente'], 401);
             }
         } else {
-            return response()->json(['errors' => "Debe autenticar primero $ret"], 401);
+            return response()->json(['error' => "Debe autenticar primero $ret"], 401);
         }
     }
 }

@@ -52,7 +52,7 @@ class AbonoController extends Controller
         $abono->cantidad = $request->cantidad;
         $abono->save();
 
-        return response()->json(['success' => 'No hay errores'], 200);
+        return response()->json(['exito' => 'No hay errores'], 200);
     }
 
     /**
@@ -89,9 +89,9 @@ class AbonoController extends Controller
         if ($abono) {
             $abono->delete();
 
-            return response()->json(['success' => 'abono eliminado correctamente'], 200);
+            return response()->json(['exito' => 'abono eliminado correctamente'], 200);
         } else {
-            return response()->json(['errors' => 'No se pudo eliminar el abono'], 400);
+            return response()->json(['error' => 'No se pudo eliminar el abono'], 400);
         }
     }
 }
