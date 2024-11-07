@@ -23,6 +23,14 @@ class AbonoPolicy
             return $usuario->id == $evento->user_id; // ejemplo de validación
         }
     }
+    /**
+     * Determine whether the user can view the model.
+     */
+    public function view(Usuario $usuario, Abono $abono): bool
+    {
+
+        return $usuario->rol == 'Gerente' || ( $usuario->rol == 'Cliente' && $usuario->id == $abono->evento->usuario_id);
+    }
 
     /**
      * Determine whether the user can create models.

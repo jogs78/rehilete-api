@@ -41,11 +41,15 @@ class EventoAbonoController extends Controller
      */
     public function show(Evento $evento, Abono $abono)
     {
-        $pdf = Pdf::loadView('abono/show',compact('abono'));
+        if (Gate::allows('view', $abono)) {
+            $pdf = Pdf::loadView('abono/show',compact('abono'));
+            // Devuelve el PDF para descargar
+            return $pdf->download('mi_documento.pdf');
+            //return view('abono/show');    
+        }else {
+            return response()->json('El usuario actual no puede ver los abonos de este evento', 403);
 
-        // Devuelve el PDF para descargar
-        return $pdf->download('mi_documento.pdf');
-        //return view('abono/show');
+        }
     }
     /**
      * Store a newly created resource in storage.

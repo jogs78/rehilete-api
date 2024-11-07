@@ -32,7 +32,7 @@ class Handler extends ExceptionHandler
 {
     if ($exception instanceof ModelNotFoundException) {
         return response()->json([
-            'error' => 'El recurso solicitado no fue encontrado.'
+             'El recurso solicitado no fue encontrado.'
         ], 404);
     }
 
