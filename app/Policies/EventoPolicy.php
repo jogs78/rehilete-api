@@ -94,6 +94,13 @@ class EventoPolicy
             // Puedes ahora usar $evento en la lógica de autorización
             return $user->id == $evento->user_id; // ejemplo de validación
         }
-
     }
+        /**
+     * Determine whether the user can view the model.
+     */
+    public function contrato (Usuario $usuario, Evento $evento): bool
+    {
+        return $usuario->rol == 'Gerente' || ( $usuario->rol == 'Cliente' && $usuario->id == $evento->usuario_id);
+    }
+
 }

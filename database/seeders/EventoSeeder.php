@@ -40,6 +40,7 @@ class EventoSeeder extends Seeder
         $evento->descripcion = 'Celebraremos los quince años de mi prima, paco';
         $evento->num_personas = 300;
         $evento->confirmacion = 'confirmado';
+        $evento->gerente_id = 4;
         $evento->realizado = true;
         $evento->save();
         $evento->servicios()->attach([1, 3]);
