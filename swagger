@@ -1,0 +1,6 @@
+1. Instalar L5-Swagger: composer require "darkaonline/l5-swagger"
+2. Publicar el archivo de configuración: php artisan vendor:publish --provider "L5Swagger\L5SwaggerServiceProvider"
+3. 3. Configurar L5-Swagger: 
+4. Generar la documentación
+5. Crear la documentación: php artisan l5-swagger:generate
+6. Acceder a la documentación: http://tu_dominio/api/documentation:OBOBOBOBOAOAOA
