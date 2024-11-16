@@ -1,0 +1,21 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Título de tu API",
+        "description": "Descripción de tu API",
+        "version": "1.0"
+    },
+    "paths": {
+        "/api/users": {
+            "get": {
+                "summary": "Obtener lista de usuarios",
+                "operationId": "f64db18813acdc92f2fc9cebe6651aeb",
+                "responses": {
+                    "200": {
+                        "description": "Lista de usuarios"
+                    }
+                }
+            }
+        }
+    }
+}
