@@ -13,9 +13,23 @@ use Illuminate\Support\Facades\Storage;
 
 class UsuarioController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+/**
+ * 
+ * @OA\Info(
+ *     title="Título de tu API",
+ *     version="1.0",
+ *     description="Descripción de tu API"
+ * )
+ *
+ * @OA\Get(
+ *     path="/api/users",
+ *     summary="Obtener lista de usuarios",
+ *     @OA\Response(
+ *         response=200,
+ *         description="Lista de usuarios"
+ *     )
+ * )
+ */
     public function index()
     {
         if (Gate::allows('viewAny', Usuario::class)) {
