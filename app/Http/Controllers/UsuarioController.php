@@ -11,25 +11,42 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
-class UsuarioController extends Controller
-{
 /**
+ * @OA\Tag(
+ *     name="Usuarios",
+ *     description="Operaciones relacionadas con los usuarios"
+ * )
  * 
- * @OA\Info(
- *     title="Título de tu API",
- *     version="1.0",
- *     description="Descripción de tu API"
+ * @OA\Schema(
+ *     schema="Usuario",
+ *     type="object",
+ *     @OA\Property(property="id", type="integer"),
+ *     @OA\Property(property="nombre", type="string"),
+ *     @OA\Property(property="email", type="string"),
  * )
  *
- * @OA\Get(
- *     path="/api/users",
- *     summary="Obtener lista de usuarios",
- *     @OA\Response(
- *         response=200,
- *         description="Lista de usuarios"
- *     )
- * )
  */
+class UsuarioController extends Controller
+{
+    /**
+     * @OA\Get(
+     *     path="/api/usuarios",
+     *     summary="Listar todos los usuarios",
+     *     tags={"Usuarios"},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Lista de usuarios obtenida con éxito",
+     *         @OA\JsonContent(
+     *             type="array",
+     *             @OA\Items(ref="#/components/schemas/Usuario")
+     *         ) 
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="Solo el gerente puede listar usuarios"
+     *     )
+     * )
+     */
     public function index()
     {
         if (Gate::allows('viewAny', Usuario::class)) {
@@ -41,8 +58,26 @@ class UsuarioController extends Controller
         }
     }
 
-    /**
-     * Store a newly created resource in storage.
+ /**
+     * @OA\Post(
+     *     path="/api/usuarios",
+     *     summary="Crear un nuevo usuario",
+     *     tags={"Usuarios"},
+     *     @OA\RequestBody(
+     *         required=true
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="Usuario creado con éxito",
+     *         @OA\JsonContent(
+     *             ref="#/components/schemas/Usuario"
+     *         ) 
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="Solo el gerente puede agregar usuarios"
+     *     )
+     * )
      */
     public function store(StoreUsuarioRequest $request)
     {
@@ -72,7 +107,7 @@ class UsuarioController extends Controller
             }
             $usuario->save();
 
-            return response()->json($usuario);
+            return response()->json($usuario,201);
         } else {
             return response()->json('Solo el gerente puede crear usuarios.', 403);
         }
