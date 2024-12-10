@@ -130,6 +130,7 @@ class PaqueteController extends Controller
 
     public function activar(Paquete $paquete)
     {
+        if(is_null($paquete->activo)) response()->json($paquete,422);
         $paquete->activo = ! $paquete->activo;
         $paquete->save();
 
