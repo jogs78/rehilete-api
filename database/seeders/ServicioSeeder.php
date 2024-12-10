@@ -12,81 +12,91 @@ class ServicioSeeder extends Seeder
      */
     public function run(): void
     {
-        $serv = new Servicio;
-        $serv->nombre = 'Mantelería';
-        $serv->precio = 100;
-        $serv->descripcion = 'Manteleria para las mesas';
-        $serv->minimo = 0;
-        $serv->save();
+        $servicio = new Servicio;
+        $servicio->nombre = 'Mantelería';
+        $servicio->precio = 100;
+        $servicio->descripcion = 'Manteleria para las mesas';
+        $servicio->minimo = 0;
+        $servicio->cuantos = 10;
+        $servicio->save();
 
-        $serv = new Servicio;
-        $serv->nombre = 'Meseros';
-        $serv->precio = 200;
-        $serv->descripcion = 'Recomendado: 3 por mesa minimo';
-        $serv->minimo = 0;
-        $serv->save();
+        $servicio = new Servicio;
+        $servicio->nombre = 'Meseros';
+        $servicio->precio = 200;
+        $servicio->descripcion = 'Recomendado: 1 por 2 mesas minimo';
+        $servicio->minimo = 0;
+        $servicio->cuantos = 10;
+        $servicio->save();
 
-        $serv = new Servicio;
-        $serv->nombre = 'Aire acondicionado';
-        $serv->precio = 800;
-        $serv->descripcion = 'Aire acondicionado para el  lugar';
-        $serv->minimo = 1;
-        $serv->save();
+        $servicio = new Servicio;
+        $servicio->nombre = 'Aire acondicionado';
+        $servicio->precio = 800;
+        $servicio->descripcion = 'Aire acondicionado para el  lugar';
+        $servicio->minimo = 1;
+        $servicio->unico = true;
+        $servicio->save();
 
-        $serv = new Servicio;
-        $serv->nombre = 'Cocina equipada';
-        $serv->precio = 300;
-        $serv->descripcion = 'cocina con todo equipado.';
-        $serv->minimo = 1;
-        $serv->save();
+        $servicio = new Servicio;
+        $servicio->nombre = 'Cocina equipada';
+        $servicio->precio = 300;
+        $servicio->descripcion = 'cocina con todo equipado.';
+        $servicio->minimo = 1;
+        $servicio->unico = true;
+        $servicio->save();
 
-        $serv = new Servicio;
-        $serv->nombre = 'Suministros para baños';
-        $serv->precio = 100;
-        $serv->descripcion = 'papeles de baño, jabon, entre mas.';
-        $serv->minimo = 1;
-        $serv->save();
+        $servicio = new Servicio;
+        $servicio->nombre = 'Suministros para baños';
+        $servicio->precio = 100;
+        $servicio->descripcion = 'papeles de baño, jabon, entre mas.';
+        $servicio->minimo = 1;
+        $servicio->unico = true;
+        $servicio->save();
 
-        $serv = new Servicio;
-        $serv->nombre = 'Tiempo del Salon';
-        $serv->precio = 1000;
-        $serv->descripcion = '5 horas';
-        $serv->minimo = 1;
-        $serv->save();
+        $servicio = new Servicio;
+        $servicio->nombre = 'Tiempo del Salon';
+        $servicio->precio = 1000;
+        $servicio->descripcion = '5 horas';
+        $servicio->minimo = 1;
+        $servicio->unico = true;
+        $servicio->save();
 
-        $serv = new Servicio;
-        $serv->nombre = 'Mesa para pastel';
-        $serv->precio = 150;
-        $serv->descripcion = 'Mesa grande';
-        $serv->minimo = 0;
-        $serv->save();
+        $servicio = new Servicio;
+        $servicio->nombre = 'Mesa para pastel';
+        $servicio->precio = 150;
+        $servicio->descripcion = 'Mesa grande';
+        $servicio->minimo = 0;
+        $servicio->unico = true;
+        $servicio->save();
 
-        $serv = new Servicio;
-        $serv->nombre = 'Mesa para recuerdo';
-        $serv->precio = 100;
-        $serv->descripcion = 'Mesa mediana';
-        $serv->minimo = 0;
-        $serv->save();
+        $servicio = new Servicio;
+        $servicio->nombre = 'Mesa para regalos';
+        $servicio->precio = 100;
+        $servicio->descripcion = 'Mesa mediana';
+        $servicio->minimo = 0;
+        $servicio->save();
 
-        $serv = new Servicio;
-        $serv->nombre = 'Area Infantil';
-        $serv->precio = 280;
-        $serv->descripcion = 'Area de juegos infantil';
-        $serv->minimo = 1;
-        $serv->save();
+        $servicio = new Servicio;
+        $servicio->nombre = 'Area Infantil';
+        $servicio->precio = 280;
+        $servicio->descripcion = 'Area de juegos infantil';
+        $servicio->minimo = 1;
+        $servicio->unico = true;
+        $servicio->save();
 
-        $serv = new Servicio;
-        $serv->nombre = 'Mobiliario Infantil';
-        $serv->precio = 200;
-        $serv->descripcion = 'Para 30 niños';
-        $serv->minimo = 0;
-        $serv->save();
+        $servicio = new Servicio;
+        $servicio->nombre = 'Mobiliario Infantil';
+        $servicio->precio = 200;
+        $servicio->descripcion = 'Para 10 niños';
+        $servicio->minimo = 0;
+        $servicio->cuantos = 10;
+        $servicio->save();
 
-        $serv = new Servicio;
-        $serv->nombre = 'Mobiliario';
-        $serv->precio = 500;
-        $serv->descripcion = '10 adultos y una mesa';
-        $serv->minimo = 0;
-        $serv->save();
+        $servicio = new Servicio;
+        $servicio->nombre = 'Mobiliario';
+        $servicio->precio = 500;
+        $servicio->descripcion = '10 adultos y una mesa';
+        $servicio->minimo = 0;
+        $servicio->cuantos = 10;
+        $servicio->save();
     }
 }

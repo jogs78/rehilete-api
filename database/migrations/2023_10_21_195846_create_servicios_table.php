@@ -16,7 +16,9 @@ return new class extends Migration
             $table->string('nombre');
             $table->float('precio');
             $table->string('descripcion');
+            $table->boolean('unico')->default(false);
             $table->boolean('minimo')->nullable();
+            $table->integer('cuantos')->unsigned()->nullable()->default(null);
             $table->timestamps();
         });
     }

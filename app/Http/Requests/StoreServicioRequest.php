@@ -26,6 +26,7 @@ class StoreServicioRequest extends FormRequest
             'precio' => 'required|numeric',
             'descripcion' => 'required|string',
             'minimo' => 'required|numeric|integer|nullable',
+            //falta validar unico y cuantos
         ];
     }
 
