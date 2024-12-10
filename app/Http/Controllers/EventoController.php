@@ -259,7 +259,7 @@ class EventoController extends Controller
             if (isset($request->precio)) {
                 $evento->precio = $request->precio;
             }
-            $evento->motivo = null;
+            $evento->razon = null;
             $evento->save();
 
             return response()->json($evento);
@@ -279,7 +279,7 @@ class EventoController extends Controller
             Log::channel('debug')->info('rechazando');
             $evento->confirmacion = 'rechazado';
             $evento->gerente_id = $usuario->id;
-            $evento->motivo = $request->motivo;
+            $evento->razon = $request->razon;
             $evento->save();
 
             return response()->json($evento);

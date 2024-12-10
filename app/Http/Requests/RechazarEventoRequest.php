@@ -22,7 +22,7 @@ class RechazarEventoRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'motivo' => 'required',
+            'razon' => 'required',
         ];
     }
 

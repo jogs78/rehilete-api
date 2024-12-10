@@ -71,7 +71,7 @@ class EventoSeeder extends Seeder
         $evento->descripcion = 'Bautizaremos a mi sobrinito';
         $evento->num_personas = 80;
         $evento->confirmacion = 'rechazado';
-        $evento->motivo = 'Esa fecha ya esta ocupada';
+        $evento->razon = 'Esa fecha ya esta ocupada';
         $evento->save();
         $evento->servicios()->attach([3]);
 

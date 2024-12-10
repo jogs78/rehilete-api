@@ -26,7 +26,7 @@ return new class extends Migration
             $table->integer('num_personas');
             $table->enum('confirmacion', ['sin confirmar', 'rechazado', 'confirmado'])->default('sin confirmar'); // SinConfirmar  || espera || Confirmado
             $table->boolean('realizado')->default(false);
-            $table->string('motivo')->nullable()->default(null);
+            $table->string('razon')->nullable()->default(null);
             $table->timestamps();
 
             $table->foreign('usuario_id')->references('id')->on('usuarios');
