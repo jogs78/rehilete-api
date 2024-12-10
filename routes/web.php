@@ -28,3 +28,10 @@ Route::get('migrar', function () {
             '--force' => true,
         ]);
 });
+
+Route::get('politica',function () {
+    echo "Politicas";
+});
+Route::get('condiciones',function () {
+    echo "Condiciones";
+});

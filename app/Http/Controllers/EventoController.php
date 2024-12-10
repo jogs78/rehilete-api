@@ -16,6 +16,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Barryvdh\DomPDF\Facade\Pdf;
+
 
 class EventoController extends Controller
 {
@@ -287,6 +289,40 @@ class EventoController extends Controller
             return response()->json('Solo el gerente puede rechazar eventos', 403);
         }
     }
+
+        /**
+     * Confirmar un evento
+     */
+    public function contrato(Evento $evento)
+    {
+                /*
+                los eventos confirmados son
+                2 -> 15000
+                6 -> 10000
+                7 -> 15000
+                9 -> 8000
+                13-> 8000
+
+                carlos es 4
+                empleado es 5
+        */
+
+
+        if ($evento->confirmacion != 'confirmado'){
+            return response()->json("Este evento no esta confirmado: $evento->confirmacion", 422);
+        }
+        if (Gate::allows('contrato', $evento)) {
+            //Log::channel('debug')->info('Confirmando');
+            $pdf = Pdf::loadView('pdfs.contrato',compact('evento'));
+            // Devuelve el PDF para descargar
+            return $pdf->download('mi_documento.pdf');
+            //return view('pdfs.contrato');    
+        }else {
+            return response()->json('El usuario actual no puede ver el contrato de este evento', 403);
+        } 
+    }
+
+
 
     public function totalAbonos(Evento $evento)
     {
