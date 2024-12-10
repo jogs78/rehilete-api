@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('eventos', function (Blueprint $table) {
             $table->id();
-            $table->string('nombre');
+            $table->string('motivo');
             $table->unsignedBigInteger('usuario_id');
             $table->unsignedBigInteger('paquete_id')->nullable();
             $table->float('paquete_precio')->nullable();

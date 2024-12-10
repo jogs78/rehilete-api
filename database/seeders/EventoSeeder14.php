@@ -18,7 +18,7 @@ class EventoSeeder14 extends Seeder
         
         $evento = new Evento;
         $evento->id = 14;
-        $evento->nombre = 'Evento hace 1h, Hugo';
+        $evento->motivo = 'Evento hace 1h, Hugo';
         $evento->usuario_id = 1;
         $evento->paquete_id = 4;
         $evento->precio = 8000;

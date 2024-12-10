@@ -98,7 +98,7 @@ class EventoController extends Controller
             Log::channel('debug')->info('HORAS:'.$hora_final->format('H:i:s'));
             Carbon::now()->utc();
             $evento = new Evento;
-            $evento->nombre = $request->nombre;
+            $evento->motivo = $request->motivo;
             $evento->usuario_id = $gerente ? $request->usuario_id : $usuario->id;
             $evento->paquete_id = $request->paquete_id;
             $evento->paquete_precio = $acumulado;
@@ -166,8 +166,8 @@ class EventoController extends Controller
             $acumulado = Paquete::find($evento->paquete_id)->precio;
             $datos = $request->all();
 
-            if (isset($datos['nombre'])) {
-                $evento->nombre = $datos['nombre'];
+            if (isset($datos['motivo'])) {
+                $evento->motivo = $datos['motivo'];
             }
             if ($gerente && isset($datos['usuario_id'])) {
                 $evento->usuario_id = $datos['usuario_id'];

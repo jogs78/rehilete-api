@@ -15,7 +15,7 @@ class EventoSeeder extends Seeder
     {
         $evento = new Evento;
         $evento->id = 1;
-        $evento->nombre = 'Evento AE1, Hugo';
+        $evento->motivo = 'Evento AE1, Hugo';
         $evento->usuario_id = 1;
         $evento->paquete_id = 3;
         $evento->precio = 10000;
@@ -30,7 +30,7 @@ class EventoSeeder extends Seeder
 
         $evento = new Evento;
         $evento->id = 2;
-        $evento->nombre = 'Evento AE2, Paco';
+        $evento->motivo = 'Evento AE2, Paco';
         $evento->usuario_id = 2;
         $evento->paquete_id = 2;
         $evento->precio = 15000;
@@ -46,7 +46,7 @@ class EventoSeeder extends Seeder
 
         $evento = new Evento;
         $evento->id = 3;
-        $evento->nombre = 'Evento AE3, Paco';
+        $evento->motivo = 'Evento AE3, Paco';
         $evento->usuario_id = 2;
         $evento->paquete_id = 3;
         $evento->precio = 5000;
@@ -61,7 +61,7 @@ class EventoSeeder extends Seeder
 
         $evento = new Evento;
         $evento->id = 4;
-        $evento->nombre = 'Evento AE4, Paco';
+        $evento->motivo = 'Evento AE4, Paco';
         $evento->usuario_id = 2;
         $evento->paquete_id = 4;
         $evento->precio = 8000;
@@ -77,7 +77,7 @@ class EventoSeeder extends Seeder
 
         $evento = new Evento;
         $evento->id = 5;
-        $evento->nombre = 'Evento AE5, Luis';
+        $evento->motivo = 'Evento AE5, Luis';
         $evento->usuario_id = 3;
         $evento->paquete_id = 2;
         $evento->precio = 12000;
@@ -92,7 +92,7 @@ class EventoSeeder extends Seeder
 
         $evento = new Evento;
         $evento->id = 6;
-        $evento->nombre = 'Evento AE6, Hugo';
+        $evento->motivo = 'Evento AE6, Hugo';
         $evento->usuario_id = 1;
         $evento->paquete_id = 3;
         $evento->precio = 10000;
@@ -107,7 +107,7 @@ class EventoSeeder extends Seeder
 
         $evento = new Evento;
         $evento->id = 7;
-        $evento->nombre = 'Evento AE7, Paco';
+        $evento->motivo = 'Evento AE7, Paco';
         $evento->usuario_id = 2;
         $evento->paquete_id = 2;
         $evento->precio = 15000;
@@ -122,7 +122,7 @@ class EventoSeeder extends Seeder
 
         $evento = new Evento;
         $evento->id = 8;
-        $evento->nombre = 'Evento AE8, Paco';
+        $evento->motivo = 'Evento AE8, Paco';
         $evento->usuario_id = 2;
         $evento->paquete_id = 3;
         $evento->precio = 5000;
@@ -137,7 +137,7 @@ class EventoSeeder extends Seeder
 
         $evento = new Evento;
         $evento->id = 9;
-        $evento->nombre = 'Evento AE9, Paco';
+        $evento->motivo = 'Evento AE9, Paco';
         $evento->usuario_id = 2;
         $evento->paquete_id = 4;
         $evento->precio = 8000;
@@ -154,7 +154,7 @@ class EventoSeeder extends Seeder
 
         $evento = new Evento;
         $evento->id = 10;
-        $evento->nombre = 'Evento AE10, Luis';
+        $evento->motivo = 'Evento AE10, Luis';
         $evento->usuario_id = 3;
         $evento->paquete_id = 2;
         $evento->precio = 12000;
@@ -169,7 +169,7 @@ class EventoSeeder extends Seeder
 
         $evento = new Evento;
         $evento->id = 11;
-        $evento->nombre = 'Evento AE10, Luis';
+        $evento->motivo = 'Evento AE10, Luis';
         $evento->usuario_id = 3;
         $evento->paquete_id = 2;
         $evento->precio = 12000;
@@ -184,7 +184,7 @@ class EventoSeeder extends Seeder
 
         $evento = new Evento;
         $evento->id = 12;
-        $evento->nombre = 'Evento AE12, Luis';
+        $evento->motivo = 'Evento AE12, Luis';
         $evento->usuario_id = 3;
         $evento->paquete_id = 2;
         $evento->precio = 12000;
@@ -198,7 +198,7 @@ class EventoSeeder extends Seeder
 
         $evento = new Evento;
         $evento->id = 13;
-        $evento->nombre = 'Evento hoy, Paco';
+        $evento->motivo = 'Evento hoy, Paco';
         $evento->usuario_id = 2;
         $evento->paquete_id = 4;
         $evento->precio = 8000;

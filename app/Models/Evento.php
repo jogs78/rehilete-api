@@ -10,7 +10,7 @@ class Evento extends Model
     use HasFactory;
 
     protected $fillable = [
-        'nombre', 'usuario_id', 'paquete_id', 'paquete_precio', 'precio',
+        'motivo', 'usuario_id', 'paquete_id', 'paquete_precio', 'precio',
         'fecha', 'hora_inicio', 'hora_fin', 'descripcion', 'gerente_id',
         'num_personas', 'confirmacion', 'realizado', 'razon',
     ];
@@ -64,7 +64,7 @@ class Evento extends Model
     {
         return $this->hasOne(Usuario::class, 'id', 'gerente_id')
 //        ->withDefault();
-            ->withDefault(['nombre' => 'Sin gerente que haya revisado']);
+            ->withDefault(['motivo' => 'Sin gerente que haya revisado']);
 
     }
 

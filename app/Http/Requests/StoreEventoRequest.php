@@ -23,7 +23,7 @@ class StoreEventoRequest extends FormRequest
     public function rules(): array
     {
         $reglas = [
-            'nombre' => 'required',
+            'motivo' => 'required',
             'paquete_id' => 'required|exists:paquetes,id',
             'fecha' => ['required', 'date', 'date_format:Y-m-d'],
             //            'hora_inicio' => ['required', 'integer', 'between:0,23'],

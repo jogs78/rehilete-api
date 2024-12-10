@@ -23,7 +23,7 @@ class UpdateEventoRequest extends FormRequest
     public function rules(): array
     {
         $reglas = [
-            'nombre' => 'nullable',
+            'motivo' => 'nullable',
             'paquete_id' => 'nullable|exists:paquetes,id',
             'fecha' => ['nullable', 'date', 'date_format:Y-m-d'],
             //            'hora_inicio' => ['nullable', 'integer', 'between:0,23'],
