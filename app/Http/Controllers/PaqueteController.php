@@ -21,7 +21,7 @@ class PaqueteController extends Controller
         if (is_null($usuario)) {
             Log::channel('debug')->info("usuario nulo");
 
-            $paquetes = Paquete::with('servicios', 'imagenes')->where('activo', true)->get();
+            $paquetes = Paquete::where('activo', true)->get();
 
             return response()->json($paquetes);
         }
