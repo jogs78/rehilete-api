@@ -49,10 +49,10 @@ Route::get('migrar', function () {
 Route::post('entrada', [PuertaController::class, 'entrada']);
 Route::post('salida', [PuertaController::class, 'salida'])->middleware('conToken')->name('usuarios.avatar');
 
-Route::apiResource('servicios', ServicioController::class, ['only' => ['index', 'show']]);
+Route::apiResource('servicios', ServicioController::class, ['only' => ['index', 'show']])->middleware('sinToken');;
 Route::apiResource('servicios', ServicioController::class, ['except' => ['index', 'show']])->middleware('conToken');
-Route::apiResource('servicios.medios', ServicioMedioController::class, ['only' => ['index']]);
-Route::apiResource('servicios.medios', ServicioMedioController::class, ['except' => ['index', 'update']])->middleware('conToken');
+Route::apiResource('servicios.medios', ServicioMedioController::class, ['only' => ['index', 'show']]);
+Route::apiResource('servicios.medios', ServicioMedioController::class, ['except' => ['index', 'show', 'update']])->middleware('conToken');
 
 Route::apiResource('usuarios', UsuarioController::class)->middleware('conToken');
 Route::post('usuarios/registrar', [AyudaController::class, 'registroUsuario']);
