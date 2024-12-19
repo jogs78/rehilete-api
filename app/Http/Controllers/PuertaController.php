@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Log;
 
 class PuertaController extends Controller
 {
@@ -14,6 +15,7 @@ class PuertaController extends Controller
     {
         $user = $request->nombre_usuario;
         $passw = $request->passw;
+        Log::channel('debug')->info("Usuario".$user.", contraseña:".$passw);
 
         //dd($user,$passw);
 
@@ -21,10 +23,11 @@ class PuertaController extends Controller
         if ($usuario) {
             if (Hash::check($passw, $usuario->contraseña)) {
                 $usuario->token = Str::random();
-                $usuario->expiracion = time() + (1 * 60 * 60);
+                $segundos = (1 * 60 * 60); 
+                $usuario->expiracion = time() + $segundos;
                 Auth::loginUsingId($usuario->id);
                 $usuario->save();
-
+                $usuario->segundos=$segundos;
                 return response()->json($usuario, 200);
             } else {
                 return response()->json('Contraseña o usuario no encontrado', 400);

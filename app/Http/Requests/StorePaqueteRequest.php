@@ -23,7 +23,6 @@ class StorePaqueteRequest extends FormRequest
     {
         return [
             'nombre' => 'required|string',
-            'precio' => 'required|numeric',
             'descripcion' => 'required|string',
             //            'activo'        =>'nullable', //true,false
         ];

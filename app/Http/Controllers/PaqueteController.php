@@ -28,11 +28,11 @@ class PaqueteController extends Controller
         
         switch ($usuario->rol) {
             case 'Gerente':
-                $paquetes = Paquete::with('servicios', 'imagenes')->get();
+                $paquetes = Paquete::all();
                 break;
             case 'Cliente':
             case 'Empleado':
-                $paquetes = Paquete::with('servicios', 'imagenes')->where('activo', true)->get(); //
+                $paquetes = Paquete::where('activo', true)->get(); //
                 break;
         }
 
@@ -128,10 +128,20 @@ class PaqueteController extends Controller
         return response()->json($paquete);
     }
 
+    
     public function activar(Paquete $paquete)
     {
-        if(is_null($paquete->activo)) response()->json($paquete,422);
-        $paquete->activo = ! $paquete->activo;
+        if(is_null($paquete->precio)) return response()->json("El precio no puede ser nulo",422);
+        $paquete->activo = true;
+        $paquete->save();
+
+        return response()->json($paquete);
+    }
+
+    public function desactivar(Paquete $paquete)
+    {
+        if(is_null($paquete->activo)) return response()->json($paquete,422);
+        $paquete->activo =false;
         $paquete->save();
 
         return response()->json($paquete);
