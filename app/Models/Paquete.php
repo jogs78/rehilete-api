@@ -14,7 +14,7 @@ class Paquete extends Model
 
     public function servicios()
     {
-        return $this->belongsToMany(Servicio::class);
+        return $this->belongsToMany(Servicio::class)->withPivot('servicio_cantidad');
     }
 
     public function eventos()

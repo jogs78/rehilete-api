@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Paquete;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class PaqueteSeeder extends Seeder
 {
@@ -12,6 +13,10 @@ class PaqueteSeeder extends Seeder
      */
     public function run(): void
     {
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        DB::table('paquetes')->truncate();
+
+
         $paquete = new Paquete;
         $paquete->nombre = 'Bodas';
         $paquete->precio = 6600;
@@ -48,8 +53,7 @@ class PaqueteSeeder extends Seeder
             7 => ['servicio_cantidad' => 1],
             8 => ['servicio_cantidad' => 1],
             9 => ['servicio_cantidad' => null],
-            10 => ['servicio_cantidad' => 1],
-            11 => ['servicio_cantidad' => 8],
+
         ]);
 
         $paquete = new Paquete;
@@ -65,11 +69,6 @@ class PaqueteSeeder extends Seeder
             4 => ['servicio_cantidad' => null],
             5 => ['servicio_cantidad' => null],
             6 => ['servicio_cantidad' => null],
-            7 => ['servicio_cantidad' => 1],
-            8 => ['servicio_cantidad' => 1],
-            9 => ['servicio_cantidad' => null],
-            10 => ['servicio_cantidad' => 4],
-            11 => ['servicio_cantidad' => 5],
         ]);
 
         $paquete = new Paquete;
@@ -82,12 +81,6 @@ class PaqueteSeeder extends Seeder
             1 => ['servicio_cantidad' => 7],
             3 => ['servicio_cantidad' => null],
             4 => ['servicio_cantidad' => null],
-            5 => ['servicio_cantidad' => null],
-            6 => ['servicio_cantidad' => null],
-            8 => ['servicio_cantidad' => 2],
-            9 => ['servicio_cantidad' => null],
-            10 => ['servicio_cantidad' => 2],
-            11 => ['servicio_cantidad' => 5],
         ]);
 
         $paquete = new Paquete;
@@ -174,5 +167,7 @@ class PaqueteSeeder extends Seeder
             10 => ['servicio_cantidad' => 1],
             11 => ['servicio_cantidad' => 4],
         ]);
+
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
     }
 }

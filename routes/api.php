@@ -70,7 +70,9 @@ Route::put('paquetes/activar/{paquete}', [PaqueteController::class, 'activar'])-
 Route::put('paquetes/desactivar/{paquete}', [PaqueteController::class, 'desactivar'])->middleware('conToken')->name('paquetes.desactivar');
 Route::apiResource('paquetes.medios', PaqueteMedioController::class, ['only' => ['index', 'show']])->middleware('sinToken');
 Route::apiResource('paquetes.medios', PaqueteMedioController::class, ['except' => ['index', 'update', 'show']])->middleware('conToken');
-Route::apiResource('paquetes.servicios', PaqueteServicioController::class, ['except' => ['show', 'update']])->middleware('conToken');
+Route::apiResource('paquetes.servicios', PaqueteServicioController::class, ['only' => ['index']])->middleware('sinToken');
+
+Route::apiResource('paquetes.servicios', PaqueteServicioController::class, ['except' => ['index','show', 'update']])->middleware('conToken');
 
 Route::apiResource('eventos', EventoController::class)->middleware('conToken'); //
 Route::get('eventos/{evento}/totalAbonos', [EventoController::class, 'totalAbonos'])->middleware('conToken');

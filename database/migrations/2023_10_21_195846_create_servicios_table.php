@@ -17,7 +17,8 @@ return new class extends Migration
             $table->float('precio');
             $table->string('descripcion');
             $table->boolean('unico')->default(false);
-            $table->boolean('minimo')->nullable();
+            $table->boolean('minimo')->nullable()->default(null);
+            $table->boolean('maximo')->nullable()->default(null);
             $table->integer('cuantos')->unsigned()->nullable()->default(null);
             $table->timestamps();
         });

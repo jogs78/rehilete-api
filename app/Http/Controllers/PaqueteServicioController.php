@@ -25,30 +25,39 @@ class PaqueteServicioController extends Controller
     {
 
         $validator = Validator::make($request->all(), [
-            'servicios' => 'required|array',
-            'cantidades' => [
-                'required',
-                'array',
+            'servicio' => 'required|integer',//|array
+            'cantidad' => [
+                'nullable',
+                'integer',
+//                'array',
                 Rule::requiredIf(function () use ($request) {
-                    return ! empty($request->servicios)
-                    && ! empty($request->cantidades)
-                    && count($request->servicios) !==
-                    count($request->cantidades);
+                    return ! empty($request->servicio)
+                    && ! empty($request->cantidad);
+//                    && count($request->servicios) !==
+//                    count($request->cantidades);
                 }),
             ],
         ], [
-            'servicios.required' => 'El campo :attribute es obligatorio.',
-            'cantidades.required' => 'Los arreglos servicios y cantidades deben tener el mismo tamaño.',
-            'servicios.array' => 'El campo :attribute debe ser un arreglo.',
-            'cantidades.array' => 'El campo :attribute debe ser un arreglo.',
+            'servicio.required' => 'El campo :attribute es obligatorio.',
+            'cantidad.required' => 'Los arreglos servicios y cantidades deben tener el mismo tamaño.',
+            'servicio.array' => 'El campo :attribute debe ser un arreglo.',
+            'cantidad.array' => 'El campo :attribute debe ser un arreglo.',
+            'servicio.integer' => 'El campo :attribute debe ser un entero.',
+            'cantidad.integer' => 'El campo :attribute debe ser un entero.',
         ]);
 
         if ($validator->fails()) {
             return response()->json(['error' => $validator->errors()], 422);
         }
 
+        $cantidad = $request->cantidad;
+        if(is_null($request->cantidad))$cantidad=0;
+
+        $paquete->servicios()->attach( $request->servicio, ['servicio_cantidad' =>$cantidad , 'created_at' => now() ]);
+
+        /*
         $servicios = $request->servicios;
-        $cantidades = $request->cantidades;
+
         foreach ($servicios as $servicio) {
             // Verificar si existe la cantidad asociada a este servicio
             if (array_key_exists($servicio, $cantidades) && $cantidades[$servicio] > 0) {
@@ -61,8 +70,11 @@ class PaqueteServicioController extends Controller
                 }
             }
         }
-
         return response()->json($paquete->servicios);
+
+    */
+        $ultimoServicio = $paquete->servicios()->latest('paquete_servicio.created_at','desc')->first();
+        return response()->json($ultimoServicio);
     }
 
     /**
@@ -72,6 +84,6 @@ class PaqueteServicioController extends Controller
     {
         $paquete->servicios()->detach($servicio->id);
 
-        return response()->json($paquete->servicios);
+        return response()->json($servicio);
     }
 }
