@@ -97,7 +97,7 @@ class ServicioSeeder extends Seeder
         $servicio->precio = 500;
         $servicio->descripcion = '10 adultos y una mesa';
         $servicio->minimo = 0;
-        $servicio->minimo = 10;
+        $servicio->maximo = 10;
         $servicio->cuantos = 10;
         $servicio->save();
 
