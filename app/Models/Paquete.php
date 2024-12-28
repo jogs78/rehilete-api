@@ -14,7 +14,7 @@ class Paquete extends Model
 
     public function servicios()
     {
-        return $this->belongsToMany(Servicio::class)->withPivot('servicio_cantidad');
+        return $this->belongsToMany(Servicio::class)->withPivot('servicio_cantidad')->withTimestamps();
     }
 
     public function eventos()
@@ -41,7 +41,6 @@ class Paquete extends Model
 
     public function imagenes(): MorphToMany
     {
-        return $this->morphToMany(Medio::class, 'usa', 'usables');
-        $this->morphOne();
+        return $this->morphToMany(Medio::class, 'usa', 'usables')->withTimestamps();
     }
 }

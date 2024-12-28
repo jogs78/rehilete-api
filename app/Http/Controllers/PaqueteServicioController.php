@@ -53,7 +53,7 @@ class PaqueteServicioController extends Controller
         $cantidad = $request->cantidad;
         if(is_null($request->cantidad))$cantidad=0;
 
-        $paquete->servicios()->attach( $request->servicio, ['servicio_cantidad' =>$cantidad , 'created_at' => now() ]);
+        $paquete->servicios()->attach( $request->servicio, ['servicio_cantidad' =>$cantidad ]);
 
         /*
         $servicios = $request->servicios;

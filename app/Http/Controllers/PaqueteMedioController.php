@@ -32,7 +32,7 @@ class PaqueteMedioController extends Controller
 
         $usuario = Auth::getUser();
         $agregados = [];
-        foreach ($request->file('imagenes') as $medio) {
+        $medio = $request->file('imagen');
             Log::channel('debug')->info('IMAGEN x.');
             $nombre = time().rand(1, 100).'.'.$medio->extension();
             $medio->storeAs('', $nombre, 'publicas');
@@ -43,19 +43,19 @@ class PaqueteMedioController extends Controller
             $imagen->usuario_id = $usuario->id;
             $imagen->descripcion = $request->descripcion;
             $imagen->save();
-            array_push($agregados, $imagen->id);
-        }
-        Log::channel('debug')->info('agregados: '.implode(',', $agregados));
+//            array_push($agregados, $imagen->id);
         /*
         ob_start();
         var_dump($agregados);
         $cadena_var_dump = ob_get_clean();
         Log::channel('debug')->info('agregados: ' . $cadena_var_dump );
         */
-        $paquete->imagenes()->attach($agregados);
-        $paquete->load('imagenes');
+        $paquete->imagenes()->attach($imagen->id);
+//        $paquete->load('imagenes');
+        $ultimaImagen = $paquete->imagenes()->orderByDesc('usables.created_at')->first();
+        return response()->json($ultimaImagen);
 
-        return response()->json($paquete->imagenes()->select('medios.id', 'medios.nombre')->get());
+//        return response()->json($paquete->imagenes()->select('medios.id', 'medios.nombre')->get());
     }
 
     /**
