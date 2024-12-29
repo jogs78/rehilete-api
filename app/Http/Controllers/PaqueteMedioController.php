@@ -52,7 +52,8 @@ class PaqueteMedioController extends Controller
         */
         $paquete->imagenes()->attach($imagen->id);
 //        $paquete->load('imagenes');
-        $ultimaImagen = $paquete->imagenes()->orderByDesc('usables.created_at')->first();
+
+        $ultimaImagen = $paquete->imagenes()->orderBy('created_at', 'desc')->first();
         return response()->json($ultimaImagen);
 
 //        return response()->json($paquete->imagenes()->select('medios.id', 'medios.nombre')->get());
@@ -79,8 +80,9 @@ class PaqueteMedioController extends Controller
         if ($medio) {
             Storage::disk('publicas')->delete($medio->ruta);
             $medio->delete();
-
-            return response()->json($paquete->imagenes()->select('medios.id', 'medios.nombre')->get());
+            //aqui como lo elimino debo poner un detach
+            $paquete->imagenes()->detach($medio->id);
+            return response()->json($medio);
         } else {
             return response()->json('No se pudo eliminar la Imagen Publica', 400);
         }
