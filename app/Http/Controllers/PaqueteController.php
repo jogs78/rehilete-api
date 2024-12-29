@@ -92,17 +92,14 @@ class PaqueteController extends Controller
         if (Gate::allows('update', $paquete)) {
             $datos = $request->all();
             $paquete->fill($datos);
-            $paquete->load('imagenes', 'servicios');
+//            $paquete->load('imagenes', 'servicios');
             $paquete->save();
             $servicios = $request->select;
             $paquete->servicios()->attach($servicios);
-
             return response()->json($paquete);
         } else {
             return response()->json('Solo el gerente puede actualizar paquetes o este paquete tiene eventos confirmado y pendiente', 403);
         }
-
-        return response()->json($paquete);
     }
 
     /**
