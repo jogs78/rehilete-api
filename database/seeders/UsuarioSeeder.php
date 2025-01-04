@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\Usuario;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
 
 class UsuarioSeeder extends Seeder
 {
@@ -13,6 +14,9 @@ class UsuarioSeeder extends Seeder
      */
     public function run(): void
     {
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        DB::table('usuarios')->truncate();
+
         //tres clientes hugo, paco, luis
         $alguien = new Usuario;
         $alguien->id = 1;
@@ -76,5 +80,8 @@ class UsuarioSeeder extends Seeder
         $alguien->email = 'CarlosM@gmail.com';
         $alguien->telefono = '9611506180';
         $alguien->save();
+
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+
     }
 }
