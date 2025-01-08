@@ -17,6 +17,8 @@ return new class extends Migration
             $table->unsignedBigInteger('paquete_id');
             $table->unsignedBigInteger('servicio_id');
             $table->integer('servicio_cantidad')->nullable();
+            $table->integer('servicio_precio')->nullable();
+            
             $table->timestamps();
 
             $table->foreign('paquete_id')->references('id')->on('paquetes');

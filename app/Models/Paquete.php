@@ -14,7 +14,7 @@ class Paquete extends Model
 
     public function servicios()
     {
-        return $this->belongsToMany(Servicio::class)->withPivot('servicio_cantidad')->withTimestamps();
+        return $this->belongsToMany(Servicio::class)->withPivot(['servicio_cantidad','servicio_precio'])->withTimestamps();
     }
 
     public function eventos()

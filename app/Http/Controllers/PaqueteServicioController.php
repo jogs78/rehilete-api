@@ -52,8 +52,9 @@ class PaqueteServicioController extends Controller
 
         $cantidad = $request->cantidad;
         if(is_null($request->cantidad))$cantidad=0;
+        $servicio = Servicio::find($request->servicio);
 
-        $paquete->servicios()->attach( $request->servicio, ['servicio_cantidad' =>$cantidad ]);
+        $paquete->servicios()->attach( $request->servicio, ['servicio_cantidad' =>$cantidad , 'servicio_precio' => $servicio->precio]);
 
         /*
         $servicios = $request->servicios;
