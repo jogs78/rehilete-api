@@ -22,6 +22,7 @@ class DatabaseSeeder extends Seeder
             UsuarioSeeder::class,
             ServicioSeeder::class,
             PaqueteSeeder::class,
+            ActualizarPreciosSeeder::class,
             EventoSeeder::class,
             AbonoSeeder::class,
             GastoSeeder::class,
