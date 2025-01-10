@@ -64,8 +64,8 @@ class ServicioMedioController extends Controller
         if ($medio) {
             Storage::disk('publicas')->delete($medio->ruta);
             $medio->delete();
-
-            return response()->json($servicio->imagenes()->select('medios.id', 'medios.nombre')->get());
+            $servicio->imagenes()->detach($medio->id);
+            return response()->json($medio);
         } else {
             return response()->json('No se pudo eliminar la Imagen Publica', 400);
         }
