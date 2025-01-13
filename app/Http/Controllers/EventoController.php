@@ -56,13 +56,13 @@ class EventoController extends Controller
         $usuario = Auth::getUser();
         switch ($usuario->rol) {
             case 'Gerente':
-                $eventos = Evento::with('servicios', 'fotos')->get();
+                $eventos = Evento::with('paquete')->get();
                 break;
             case 'Cliente':
-                $eventos = Evento::with('servicios', 'fotos')->where('usuario_id', $usuario->id)->get();
+                $eventos = Evento::with('paquete')->where('usuario_id', $usuario->id)->get();
                 break;
             case 'Empleado':
-                $eventos = Evento::with('servicios', 'fotos')->where('confirmacion', 'confirmado')->where('realizado', '0')->get();
+                $eventos = Evento::with('paquete')->where('confirmacion', 'confirmado')->where('realizado', '0')->get();
                 break;
             default:
                 // code...
