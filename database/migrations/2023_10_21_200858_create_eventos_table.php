@@ -24,7 +24,7 @@ return new class extends Migration
             $table->string('descripcion');
             $table->integer('gerente_id')->nullable(); //para saver quien lo confirmó
             $table->integer('num_personas')->default(100);
-            $table->enum('confirmacion', ['sin confirmar', 'rechazado', 'confirmado'])->default('sin confirmar'); // SinConfirmar  || espera || Confirmado
+            $table->enum('confirmacion', ['sin confirmar', 'rechazado', 'confirmado','postergado'])->default('sin confirmar'); // SinConfirmar  || espera || Confirmado
             $table->boolean('realizado')->default(false);
             $table->string('razon')->nullable()->default(null);
             $table->timestamps();

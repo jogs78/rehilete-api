@@ -208,7 +208,7 @@ class EventoSeeder extends Seeder
         $evento->hora_fin = '23:59';
         $evento->descripcion = 'Pruebas con fotos';
         $evento->num_personas = 80;
-        $evento->confirmacion = 'confirmado';
+        $evento->confirmacion = 'postergado';
         $evento->realizado = true;
         $evento->save();
         $evento->servicios()->attach([1, 2, 3]);
