@@ -24,19 +24,19 @@ class Paquete extends Model
 
     public function eventosConfirmados()
     {
-        return $this->hasMany(Evento::class)->where('confirmacion', 'confirmado');
+        return $this->hasMany(Evento::class)->where('confirmacion', 'validado');
     }
 
     public function eventosConfirmadosPendientes()
     {
         return $this->hasMany(Evento::class)
-            ->where('confirmacion', 'confirmado')
+            ->where('confirmacion', 'validado')
             ->where('realizado', false);
     }
 
     public function eventosNoConfirmados()
     {
-        return $this->hasMany(Evento::class)->where('confirmacion', 'sin confirmar');
+        return $this->hasMany(Evento::class)->where('confirmacion', 'sin validar');
     }
 
     public function imagenes(): MorphToMany

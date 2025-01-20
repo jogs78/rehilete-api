@@ -27,7 +27,7 @@ class EventoSeeder14 extends Seeder
         $evento->hora_fin = Carbon::now()->format("H:00:00");;
         $evento->descripcion = 'Pruebas con fotos';
         $evento->num_personas = 80;
-        $evento->confirmacion = 'confirmado';
+        $evento->confirmacion = 'validado';
         $evento->realizado = false;
         $evento->save();
         $evento->servicios()->attach([1, 2, 3]);

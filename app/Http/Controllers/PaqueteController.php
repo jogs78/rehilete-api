@@ -98,7 +98,7 @@ class PaqueteController extends Controller
             $paquete->servicios()->attach($servicios);
             return response()->json($paquete);
         } else {
-            return response()->json('Solo el gerente puede actualizar paquetes o este paquete tiene eventos confirmado y pendiente', 403);
+            return response()->json('Solo el gerente puede actualizar paquetes o este paquete tiene eventos validado y pendiente', 403);
         }
     }
 
@@ -119,7 +119,7 @@ class PaqueteController extends Controller
 
             return response()->json($paquete);
         } else {
-            return response()->json('Solo el gerente puede eliminar paquetes o o este paquete tiene eventos confirmado y pendiente', 403);
+            return response()->json('Solo el gerente puede eliminar paquetes o o este paquete tiene eventos validado y pendiente', 403);
         }
 
         return response()->json($paquete);

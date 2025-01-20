@@ -41,7 +41,7 @@ class EventoPolicy
      */
     public function view(Usuario $user, Evento $evento): bool
     {
-        $ret = ($user->rol == 'Gerente') || ($user->rol == 'Empleado' && $evento->confirmacion == 'confirmado') || ($user->rol == 'Cliente' && $evento->usuario_id == $user->id);
+        $ret = ($user->rol == 'Gerente') || ($user->rol == 'Empleado' && $evento->confirmacion == 'validado') || ($user->rol == 'Cliente' && $evento->usuario_id == $user->id);
         Log::channel('debug')->info("Puede ver un evento: $ret");
 
         return $ret;
@@ -64,7 +64,7 @@ class EventoPolicy
      */
     public function update(Usuario $user, Evento $evento): bool
     {
-        $ret = ($evento->confirmacion == 'sin confirmar' && ($user->rol == 'Gerente' || ($user->rol == 'Cliente' && $evento->usuario_id == $user->id)));
+        $ret = ($evento->confirmacion == 'sin validar' && ($user->rol == 'Gerente' || ($user->rol == 'Cliente' && $evento->usuario_id == $user->id)));
         Log::channel('debug')->info("Puede actualizar  un evento: $ret");
 
         return $ret;
@@ -76,11 +76,11 @@ class EventoPolicy
     public function delete(Usuario $user, Evento $evento): bool
     {
         /*
-                $ret =  ($user->rol='Gerente' && (($evento->confirmacion == 'sin confirmar' || $evento->confirmacion == 'rechazado' )) )
-                    ||  ($user->rol='Cliente' && (($evento->confirmacion == 'sin confirmar' || $evento->confirmacion == 'rechazado' )) );
+                $ret =  ($user->rol='Gerente' && (($evento->confirmacion == 'sin validar' || $evento->confirmacion == 'rechazado' )) )
+                    ||  ($user->rol='Cliente' && (($evento->confirmacion == 'sin validar' || $evento->confirmacion == 'rechazado' )) );
         */
         Log::channel('debug')->info("Puede borrar un evento un $user->rol");
-        $ret = ($evento->confirmacion == 'sin confirmar' || $evento->confirmacion == 'rechazado') && ($user->rol == 'Gerente' || ($user->rol == 'Cliente' && $evento->usuario_id == $user->id));
+        $ret = ($evento->confirmacion == 'sin validar' || $evento->confirmacion == 'rechazado') && ($user->rol == 'Gerente' || ($user->rol == 'Cliente' && $evento->usuario_id == $user->id));
         Log::channel('debug')->info("Puede borrar un evento: $ret");
 
         return $ret;

@@ -20,7 +20,7 @@ class EventoGastoController extends Controller
         Log::channel('debug')->info("Dentro del controller viewAny\n\tuser:".$user->toJson().", \n\tevento:".$evento->toJson());
 
         if (Gate::allows('viewAny', [Gasto::class, $evento])) {
-            if ($evento->confirmacion == 'confirmado') {
+            if ($evento->confirmacion == 'validado') {
                 $gastos = $evento->gastos;
                 if (count($gastos) == 0) {
                     return response()->json('sin gastos registrados');
@@ -28,7 +28,7 @@ class EventoGastoController extends Controller
                     return response()->json($gastos);
                 }
             } else {
-                return response()->json('El evento no esta confirmado', 422);
+                return response()->json('El evento no esta validado', 422);
             }
         } else {
             return response()->json('El usuario actual no puede ver los gastos de este evento', 403);
@@ -46,7 +46,7 @@ class EventoGastoController extends Controller
         //        Log::channel('debug')->info("Dentro del controller viewAny\n\tuser:" . $user->toJson() . ", \n\tevento:" . $evento->toJson());
 
         if (Gate::allows('create', [Gasto::class, $evento])) {
-            if ($evento->confirmacion == 'confirmado') {
+            if ($evento->confirmacion == 'validado') {
                 $gasto = new gasto;
                 $gasto->evento_id = $evento->id;
                 $gasto->descripcion = $request->descripcion;
@@ -57,7 +57,7 @@ class EventoGastoController extends Controller
                 return response()->json($gasto);
 
             } else {
-                return response()->json('El evento no esta confirmado', 422);
+                return response()->json('El evento no esta validado', 422);
             }
         } else {
             return response()->json('El usuario actual no puede acentar gastos de este evento', 403);
@@ -73,7 +73,7 @@ class EventoGastoController extends Controller
         //        Log::channel('debug')->info("Dentro del controller viewAny\n\tuser:" . $user->toJson() . ", \n\tevento:" . $evento->toJson());
 
         if (Gate::allows('delete', [$gasto, $evento])) {
-            if ($evento->confirmacion == 'confirmado') {
+            if ($evento->confirmacion == 'validado') {
                 $gasto->descripcion = $request->descripcion;
                 $gasto->cantidad = $request->cantidad;
                 $gasto->save();
@@ -82,7 +82,7 @@ class EventoGastoController extends Controller
                 return response()->json($gasto);
 
             } else {
-                return response()->json('El evento no esta confirmado', 422);
+                return response()->json('El evento no esta validado', 422);
             }
         } else {
             return response()->json('El usuario actual no puede acentar gastos de este evento', 403);
@@ -95,12 +95,12 @@ class EventoGastoController extends Controller
     public function destroy(Evento $evento, Gasto $gasto)
     {
         if (Gate::allows('delete', [$gasto, $evento])) {
-            if ($evento->confirmacion == 'confirmado') {
+            if ($evento->confirmacion == 'validado') {
                 $gasto->delete();
 
                 return response()->json($gasto);
             } else {
-                return response()->json('El evento no esta confirmado', 422);
+                return response()->json('El evento no esta validado', 422);
             }
         } else {
             return response()->json('El usuario actual no puede eliminar el gasto de este evento', 403);

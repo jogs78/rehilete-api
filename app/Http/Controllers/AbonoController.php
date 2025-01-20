@@ -16,7 +16,7 @@ class AbonoController extends Controller
      */
     public function index()
     {
-        $evRealizados = Evento::where('confirmacion', 'confirmado')->where('realizado', false)->get();
+        $evRealizados = Evento::where('confirmacion', 'validado')->where('realizado', false)->get();
         //return $evRealizados->toJson();
         $paquetes = Paquete::pluck('id', 'nombre');
         $servicios = Servicio::pluck('id', 'nombre');

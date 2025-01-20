@@ -21,7 +21,7 @@ class EventoAbonoController extends Controller
         Log::channel('debug')->info("Dentro del controller viewAny\n\tuser:".$user->toJson().", \n\tevento:".$evento->toJson());
 
         if (Gate::allows('viewAny', [Abono::class, $evento])) {
-            if ($evento->confirmacion == 'confirmado') {
+            if ($evento->confirmacion == 'validado') {
                 $abonos = $evento->abonos;
                 if (count($abonos) == 0) {
                     return response()->json('sin abonos registrados');
@@ -29,7 +29,7 @@ class EventoAbonoController extends Controller
                     return response()->json($abonos);
                 }
             } else {
-                return response()->json('El evento no esta confirmado', 422);
+                return response()->json('El evento no esta validado', 422);
             }
         } else {
             return response()->json('El usuario actual no puede ver los abonos de este evento', 403);
@@ -56,7 +56,7 @@ class EventoAbonoController extends Controller
     public function store(StoreAbonoRequest $request, Evento $evento)
     {
         if (Gate::allows('create', Abono::class)) {
-            if ($evento->confirmacion == 'confirmado') {
+            if ($evento->confirmacion == 'validado') {
                 $total = $evento->totalAbonos();
                 $falta = $evento->precio - $total;
 
@@ -99,7 +99,7 @@ class EventoAbonoController extends Controller
                 return response()->json($abono);
 
             } else {
-                return response()->json('El evento no esta confirmado', 422);
+                return response()->json('El evento no esta validado', 422);
             }
         } else {
             return response()->json('El usuario actual no puede recibir abonos de este evento', 403);
@@ -112,12 +112,12 @@ class EventoAbonoController extends Controller
     public function destroy(Evento $evento, Abono $abono)
     {
         if (Gate::allows('delete', $abono)) {
-            if ($evento->confirmacion == 'confirmado') {
+            if ($evento->confirmacion == 'validado') {
                 $abono->delete();
 
                 return response()->json($abono);
             } else {
-                return response()->json('El evento no esta confirmado', 422);
+                return response()->json('El evento no esta validado', 422);
             }
         } else {
             return response()->json('El usuario actual no puede eliminar el abono de este evento', 403);
