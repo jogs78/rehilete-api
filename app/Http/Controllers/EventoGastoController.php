@@ -20,7 +20,7 @@ class EventoGastoController extends Controller
         Log::channel('debug')->info("Dentro del controller viewAny\n\tuser:".$user->toJson().", \n\tevento:".$evento->toJson());
 
         if (Gate::allows('viewAny', [Gasto::class, $evento])) {
-            if ($evento->confirmacion == 'validado') {
+            if ($evento->estado == 'validado') {
                 $gastos = $evento->gastos;
                 if (count($gastos) == 0) {
                     return response()->json('sin gastos registrados');
@@ -46,7 +46,7 @@ class EventoGastoController extends Controller
         //        Log::channel('debug')->info("Dentro del controller viewAny\n\tuser:" . $user->toJson() . ", \n\tevento:" . $evento->toJson());
 
         if (Gate::allows('create', [Gasto::class, $evento])) {
-            if ($evento->confirmacion == 'validado') {
+            if ($evento->estado == 'validado') {
                 $gasto = new gasto;
                 $gasto->evento_id = $evento->id;
                 $gasto->descripcion = $request->descripcion;
@@ -73,7 +73,7 @@ class EventoGastoController extends Controller
         //        Log::channel('debug')->info("Dentro del controller viewAny\n\tuser:" . $user->toJson() . ", \n\tevento:" . $evento->toJson());
 
         if (Gate::allows('delete', [$gasto, $evento])) {
-            if ($evento->confirmacion == 'validado') {
+            if ($evento->estado == 'validado') {
                 $gasto->descripcion = $request->descripcion;
                 $gasto->cantidad = $request->cantidad;
                 $gasto->save();
@@ -95,7 +95,7 @@ class EventoGastoController extends Controller
     public function destroy(Evento $evento, Gasto $gasto)
     {
         if (Gate::allows('delete', [$gasto, $evento])) {
-            if ($evento->confirmacion == 'validado') {
+            if ($evento->estado == 'validado') {
                 $gasto->delete();
 
                 return response()->json($gasto);

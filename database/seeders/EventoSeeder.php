@@ -24,7 +24,7 @@ class EventoSeeder extends Seeder
         $evento->hora_fin = '14:30';
         $evento->descripcion = 'Celebrare el cumpleaños de mi hijo, dice Hugo';
         $evento->num_personas = 150;
-        $evento->confirmacion = 'sin validar';
+        $evento->estado = 'sin validar';
         $evento->save();
         $evento->servicios()->attach([2, 3]);
 
@@ -39,7 +39,7 @@ class EventoSeeder extends Seeder
         $evento->hora_fin = '06:30';
         $evento->descripcion = 'Celebraremos los quince años de mi prima, paco';
         $evento->num_personas = 300;
-        $evento->confirmacion = 'validado';
+        $evento->estado = 'validado';
         $evento->gerente_id = 4;
         $evento->realizado = true;
         $evento->save();
@@ -56,7 +56,7 @@ class EventoSeeder extends Seeder
         $evento->hora_fin = '17:00';
         $evento->descripcion = 'Celebraremos el cumpleaños numero 10 de mi hijo, paco';
         $evento->num_personas = 50;
-        $evento->confirmacion = 'sin validar';
+        $evento->estado = 'sin validar';
         $evento->save();
         $evento->servicios()->attach([2]);
 
@@ -71,7 +71,7 @@ class EventoSeeder extends Seeder
         $evento->hora_fin = '17:30';
         $evento->descripcion = 'Bautizaremos a mi sobrinito';
         $evento->num_personas = 80;
-        $evento->confirmacion = 'rechazado';
+        $evento->estado = 'rechazado';
         $evento->razon = 'Esa fecha ya esta ocupada';
         $evento->save();
         $evento->servicios()->attach([3]);
@@ -87,7 +87,7 @@ class EventoSeeder extends Seeder
         $evento->hora_fin = '03:30';
         $evento->descripcion = 'Mi hija llega a sus xv años y lo haremos en grande';
         $evento->num_personas = 250;
-        $evento->confirmacion = 'sin validar';
+        $evento->estado = 'sin validar';
         $evento->save();
         $evento->servicios()->attach([1, 2, 3]);
 
@@ -102,7 +102,7 @@ class EventoSeeder extends Seeder
         $evento->hora_fin = '20:30';
         $evento->descripcion = 'Celebrare el cumpleaños numero 6 de mis hijos';
         $evento->num_personas = 50;
-        $evento->confirmacion = 'validado';
+        $evento->estado = 'validado';
         $evento->save();
         $evento->servicios()->attach([3]);
 
@@ -117,7 +117,7 @@ class EventoSeeder extends Seeder
         $evento->hora_fin = '06:30';
         $evento->descripcion = 'Celebraremos los quince años de mi hermana';
         $evento->num_personas = 100;
-        $evento->confirmacion = 'validado';
+        $evento->estado = 'validado';
         $evento->save();
         $evento->servicios()->attach([1, 2]);
 
@@ -132,7 +132,7 @@ class EventoSeeder extends Seeder
         $evento->hora_fin = '17:00';
         $evento->descripcion = 'Celebraremos el cumpleaños numero 10 de mi hijo';
         $evento->num_personas = 150;
-        $evento->confirmacion = 'rechazado';
+        $evento->estado = 'rechazado';
         $evento->save();
         $evento->servicios()->attach([1, 2, 3]);
 
@@ -147,7 +147,7 @@ class EventoSeeder extends Seeder
         $evento->hora_fin = '17:30';
         $evento->descripcion = 'Bautizaremos a mi hijo';
         $evento->num_personas = 80;
-        $evento->confirmacion = 'validado';
+        $evento->estado = 'validado';
         $evento->realizado = true;
         $evento->gerente_id = 9;
         $evento->save();
@@ -164,7 +164,7 @@ class EventoSeeder extends Seeder
         $evento->hora_fin = '02:00';
         $evento->descripcion = 'Mi hija llega a sus xv años y lo haremos en grande';
         $evento->num_personas = 250;
-        $evento->confirmacion = 'sin validar';
+        $evento->estado = 'sin validar';
         $evento->save();
         $evento->servicios()->attach([1, 2, 3]);
 
@@ -179,7 +179,7 @@ class EventoSeeder extends Seeder
         $evento->hora_fin = '03:30';
         $evento->descripcion = 'TornaXV';
         $evento->num_personas = 250;
-        $evento->confirmacion = 'sin validar';
+        $evento->estado = 'sin validar';
         $evento->save();
         $evento->servicios()->attach([1, 2, 3]);
 
@@ -194,7 +194,7 @@ class EventoSeeder extends Seeder
         $evento->hora_fin = '03:30';
         $evento->descripcion = 'TornaXV';
         $evento->num_personas = 250;
-        $evento->confirmacion = 'sin validar';
+        $evento->estado = 'sin validar';
         $evento->save();
 
         $evento = new Evento;
@@ -208,7 +208,7 @@ class EventoSeeder extends Seeder
         $evento->hora_fin = '23:59';
         $evento->descripcion = 'Pruebas con fotos';
         $evento->num_personas = 80;
-        $evento->confirmacion = 'postergado';
+        $evento->estado = 'postergado';
         $evento->realizado = true;
         $evento->save();
         $evento->servicios()->attach([1, 2, 3]);

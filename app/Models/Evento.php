@@ -12,7 +12,7 @@ class Evento extends Model
     protected $fillable = [
         'motivo', 'usuario_id', 'paquete_id', 'paquete_precio', 'precio',
         'fecha', 'hora_inicio', 'hora_fin', 'descripcion', 'gerente_id',
-        'num_personas', 'confirmacion', 'realizado', 'razon',
+        'num_personas', 'estado', 'realizado', 'razon',
     ];
 
     public function usuario()

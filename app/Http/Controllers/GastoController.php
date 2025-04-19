@@ -21,7 +21,7 @@ class GastoController extends Controller
     public function actualizarEstadoEventos()
     {
         // Obtén los eventos confirmados que cumplen con la condición
-        $eventosPendientes = Evento::where('confirmacion', 'validado')
+        $eventosPendientes = Evento::where('estado', 'validado')
             ->where(function ($query) {
                 $query->where('fecha', '<', now()->toDateString())
                     ->orWhere(function ($query) {

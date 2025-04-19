@@ -30,7 +30,7 @@ class EventoController extends Controller
     public function actualizarEstadoEventos()
     {
         // Obtén los eventos confirmados que cumplen con la condición
-        $eventosPendientes = Evento::where('confirmacion', 'validado')
+        $eventosPendientes = Evento::where('estado', 'validado')
             ->where(function ($query) {
                 $query->where('fecha', '<', now()->toDateString())
                     ->orWhere(function ($query) {
@@ -62,7 +62,7 @@ class EventoController extends Controller
                 $eventos = Evento::with('paquete')->where('usuario_id', $usuario->id)->get();
                 break;
             case 'Empleado':
-                $eventos = Evento::with('paquete')->where('confirmacion', 'validado')->where('realizado', '0')->get();
+                $eventos = Evento::with('paquete')->where('estado', 'validado')->where('realizado', '0')->get();
                 break;
             default:
                 // code...
@@ -256,11 +256,14 @@ class EventoController extends Controller
         $usuario = Auth::getUser();
         if (Gate::allows('confirmar', $evento)) {
             Log::channel('debug')->info('Confirmando');
-            $evento->confirmacion = 'validado';
+            $evento->estado = 'validado';
             $evento->gerente_id = $usuario->id;
+/*
+//pensaba en que el gerente le pueda cambiar el precio
             if (isset($request->precio)) {
                 $evento->precio = $request->precio;
             }
+*/
             $evento->razon = null;
             $evento->save();
 
@@ -279,7 +282,7 @@ class EventoController extends Controller
         $usuario = Auth::getUser();
         if (Gate::allows('rechazar', $evento)) {
             Log::channel('debug')->info('rechazando');
-            $evento->confirmacion = 'rechazado';
+            $evento->estado = 'rechazado';
             $evento->gerente_id = $usuario->id;
             $evento->razon = $request->razon;
             $evento->save();
@@ -308,8 +311,8 @@ class EventoController extends Controller
         */
 
 
-        if ($evento->confirmacion != 'validado'){
-            return response()->json("Este evento no esta validado: $evento->confirmacion", 422);
+        if ($evento->estado != 'validado'){
+            return response()->json("Este evento no esta validado: $evento->estado", 422);
         }
         if (Gate::allows('contrato', $evento)) {
             //Log::channel('debug')->info('Confirmando');
@@ -327,7 +330,7 @@ class EventoController extends Controller
     public function totalAbonos(Evento $evento)
     {
         if (Gate::allows('total', $evento)) {
-            if ($evento->confirmacion == 'validado') {
+            if ($evento->estado == 'validado') {
 
                 return response()->json(['monto' => $evento->precio, 'abonado' => $evento->totalAbonos()]);
             } else {
@@ -342,7 +345,7 @@ class EventoController extends Controller
     public function totalGastos(Evento $evento)
     {
         if (Gate::allows('total', $evento)) {
-            if ($evento->confirmacion == 'validado') {
+            if ($evento->estado == 'validado') {
 
                 return response()->json(['monto' => $evento->precio, 'gastado' => $evento->totalGastos()]);
             } else {

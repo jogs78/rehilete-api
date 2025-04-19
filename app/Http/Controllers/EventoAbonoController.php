@@ -21,7 +21,7 @@ class EventoAbonoController extends Controller
         Log::channel('debug')->info("Dentro del controller viewAny\n\tuser:".$user->toJson().", \n\tevento:".$evento->toJson());
 
         if (Gate::allows('viewAny', [Abono::class, $evento])) {
-            if ($evento->confirmacion == 'validado') {
+            if ($evento->estado == 'validado') {
                 $abonos = $evento->abonos;
                 if (count($abonos) == 0) {
                     return response()->json('sin abonos registrados');
@@ -56,7 +56,7 @@ class EventoAbonoController extends Controller
     public function store(StoreAbonoRequest $request, Evento $evento)
     {
         if (Gate::allows('create', Abono::class)) {
-            if ($evento->confirmacion == 'validado') {
+            if ($evento->estado == 'validado') {
                 $total = $evento->totalAbonos();
                 $falta = $evento->precio - $total;
 
@@ -112,7 +112,7 @@ class EventoAbonoController extends Controller
     public function destroy(Evento $evento, Abono $abono)
     {
         if (Gate::allows('delete', $abono)) {
-            if ($evento->confirmacion == 'validado') {
+            if ($evento->estado == 'validado') {
                 $abono->delete();
 
                 return response()->json($abono);
