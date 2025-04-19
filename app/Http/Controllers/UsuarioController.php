@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\RegistrarUsuarioRequest;
 use App\Http\Requests\StoreUsuarioRequest;
 use App\Http\Requests\UpdateUsuarioRequest;
 use App\Models\Usuario;
@@ -188,4 +189,22 @@ class UsuarioController extends Controller
             return response()->json('El usuario actual no puede borrar el Avatar de este usuario.', 403);
         }
     }
+
+    public function registroUsuario(RegistrarUsuarioRequest $request)
+    {
+        $usuario = new Usuario;
+        $usuario->nombre = $request->nombre;
+        $usuario->apellido = $request->apellido;
+        $usuario->nombre_usuario = $request->nombre_usuario;
+        $usuario->contraseña = Hash::make($request->passw);
+        $usuario->rol = 'Cliente'; // no se debe poder especificar el rol  $request->rol;
+        $usuario->fecha_nacimiento = $request->fecha_nacimiento;
+        //$usuario->direccion = $request->direccion;
+        $usuario->email = $request->email;
+        $usuario->telefono = $request->telefono;
+        $usuario->save();
+
+        return response()->json([$usuario], 200);
+    }
+
 }

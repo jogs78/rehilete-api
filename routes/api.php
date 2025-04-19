@@ -55,7 +55,7 @@ Route::apiResource('servicios.medios', ServicioMedioController::class, ['only' =
 Route::apiResource('servicios.medios', ServicioMedioController::class, ['except' => ['index', 'show', 'update']])->middleware('conToken');
 
 Route::apiResource('usuarios', UsuarioController::class)->middleware('conToken');
-Route::post('usuarios/registrar', [AyudaController::class, 'registroUsuario']);
+Route::post('usuarios/registrar', [UsuarioController::class, 'registroUsuario']);
 Route::get('usuarios/{usuario}/avatar', [UsuarioController::class, 'verAvatar'])->middleware('conToken');
 Route::post('usuarios/{usuario}/avatar', [UsuarioController::class, 'subirAvatar'])->middleware('conToken');
 Route::delete('usuarios/{usuario}/avatar', [UsuarioController::class, 'borrarAvatar'])->middleware('conToken');
