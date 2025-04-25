@@ -255,15 +255,18 @@ class EventoController extends Controller
     {
         $usuario = Auth::getUser();
         if (Gate::allows('confirmar', $evento)) {
-            Log::channel('debug')->info('Confirmando');
+            Log::channel('debug')->info('estoy Confirmando');
             $evento->estado = 'validado';
             $evento->gerente_id = $usuario->id;
-/*
-//pensaba en que el gerente le pueda cambiar el precio
+            Log::channel('debug')->info( implode(', ', $request->all())   );
+
             if (isset($request->precio)) {
                 $evento->precio = $request->precio;
             }
-*/
+            if (isset($request->hora_fin)) {
+                $evento->hora_fin = $request->hora_fin;
+            }
+
             $evento->razon = null;
             $evento->save();
 

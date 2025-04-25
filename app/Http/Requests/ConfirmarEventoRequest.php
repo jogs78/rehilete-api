@@ -22,7 +22,7 @@ class ConfirmarEventoRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'precio' => 'nullable|number',
+//            'precio' => 'nullable|number',
         ];
     }
 
