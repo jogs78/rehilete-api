@@ -79,6 +79,9 @@ Route::get('eventos/{evento}/totalAbonos', [EventoController::class, 'totalAbono
 Route::get('eventos/{evento}/totalGastos', [EventoController::class, 'totalGastos'])->middleware('conToken');
 Route::put('eventos/{evento}/confirmar', [EventoController::class, 'confirmar'])->middleware('conToken'); //
 Route::put('eventos/{evento}/rechazar', [EventoController::class, 'rechazar'])->middleware('conToken'); //
+Route::put('eventos/{evento}/pausar', [EventoController::class, 'pausar'])->middleware('conToken'); //
+Route::put('eventos/{evento}/mover', [EventoController::class, 'mover'])->middleware('conToken'); //
+
 Route::get('eventos/{evento}/contrato', [EventoController::class, 'contrato'])->middleware('conToken'); //
 
 Route::apiResource('eventos.abonos', EventoAbonoController::class, ['except' => ['update']])->middleware('conToken');

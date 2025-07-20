@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Log;
 
 class EventoPolicy
 {
+    
     public function confirmar(Usuario $user, Evento $evento): bool
     {
         $ret = ($user->rol == 'Gerente');
@@ -24,6 +25,16 @@ class EventoPolicy
         return $ret;
 
     }
+    /**
+     * Determine whether the user can view the model.
+     */
+    public function postergar(Usuario $user, Evento $evento): bool
+    {
+        $ret = ($user->rol == 'Gerente') ||  ($user->rol == 'Cliente' && $evento->usuario_id == $user->id);
+        Log::channel('debug')->info("Puede ver un postergar: $ret");
+        return $ret;
+    }
+
 
     /**
      * Determine whether the user can view any models.

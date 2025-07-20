@@ -78,6 +78,7 @@ class EventoController extends Controller
     public function store(StoreEventoRequest $request)
     {
 
+        Log::channel('debug')->info('intenta');
 
         if (Gate::allows('create', Evento::class)) {
             Log::channel('debug')->info('Confirmando');
@@ -296,8 +297,57 @@ class EventoController extends Controller
         }
     }
 
-        /**
+    /**
+     * Rechazar un evento
+     */
+    public function pausar(Request $request, Evento $evento)
+    {
+        $usuario = Auth::getUser();
+        if (Gate::allows('postergar', $evento)) {
+            Log::channel('debug')->info('postergado');
+            $evento->estado = 'postergado';
+//            $evento->gerente_id = $usuario->id;
+            $evento->razon =null;
+            $evento->save();
+
+            return response()->json($evento);
+        } else {
+            return response()->json('Solo el gerente puede rechazar eventos', 403);
+        }
+    }
+/////////////////////////
+    /**
      * Confirmar un evento
+     */
+    public function mover(Request $request, Evento $evento)
+    {
+        $usuario = Auth::getUser();
+        if (Gate::allows('confirmar', $evento)) {
+            Log::channel('debug')->info('estoy Confirmando');
+            $evento->estado = 'sin validar';
+            $evento->gerente_id = $usuario->id;
+            Log::channel('debug')->info( implode(', ', $request->all())   );
+
+            if (isset($request->precio)) {
+                $evento->precio = $request->precio;
+            }
+            if (isset($request->hora_fin)) {
+                $evento->hora_fin = $request->hora_fin;
+            }
+
+            $evento->razon = null;
+            $evento->save();
+
+            return response()->json($evento);
+
+        } else {
+            return response()->json('Solo el gerente puede confirmar eventos', 403);
+        }
+    }
+
+///////////////////////
+    /**
+     * El contrato de un evento
      */
     public function contrato(Evento $evento)
     {
